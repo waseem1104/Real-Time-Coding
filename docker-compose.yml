@@ -1,0 +1,47 @@
+version: '3.6'
+
+services:
+
+  server:
+    image: node:alpine
+    volumes:
+      - ./server/src:/usr/local/server
+    working_dir: /usr/local/server
+    environment:
+      - PORT=5000
+      - DB_URL=postgres://root:password@db/app
+      - JWT_SECRET=mySecret
+    ports:
+      - 127.0.0.1:5000:5000
+    command: npm start
+    
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - './client:/app'
+      - '/app/node_modules'
+    ports:
+      - 3000:3000
+
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=app
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+    
+      
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8091:8080"
+volumes:
+  db-data: {}
