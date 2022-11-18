@@ -1,13 +1,18 @@
-import React, {Fragment, useCallback, useState} from "react";
+import React, {Fragment, useCallback, useMemo} from "react";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import {Link, useNavigate} from "react-router-dom";
-
+import io from 'socket.io-client';
 
 export default function Login(){
+
+    const socket = useMemo(() => io("ws://localhost:3000"),[]);
+    socket.on("connect", () => {
+        console.log("Connected");
+    })
     return (
         <Fragment>
             <Container>
