@@ -9,7 +9,7 @@ import io from 'socket.io-client';
 
 export default function Login(){
 
-    const socket = useMemo(() => io("ws://localhost:3000"),[]);
+    const socket = useMemo(() => io("ws://localhost:5000"),[]);
     socket.on("connect", () => {
         console.log("Connected");
     })
