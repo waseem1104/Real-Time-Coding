@@ -7,9 +7,22 @@ import Col from 'react-bootstrap/Col';
 import {Link, useNavigate} from "react-router-dom";
 import io from 'socket.io-client';
 
-export default function Login(){
+export default function Login() {
+    const {token} = sessionStorage;
 
-    const socket = useMemo(() => io("ws://localhost:5000"),[]);
+    console.log(sessionStorage);
+
+    const socket = useMemo(
+        () => io("ws://localhost:5000",
+            {
+                query: {token},
+                auth: {
+                    token: process.env.JWT_SECRET
+                }
+            }
+        )
+        , []);
+
     socket.on("connect", () => {
         console.log("Connected");
     })
@@ -19,7 +32,7 @@ export default function Login(){
                 <Row>
                     <Col>
                         <div className={"d-flex justify-content-center mt-5"}>
-                            <Card style={{ width: '25rem' }}>
+                            <Card style={{width: '25rem'}}>
                                 <Card.Body>
                                     <Card.Title>Connectez-vous</Card.Title>
                                     <div className="input-group mb-3">
