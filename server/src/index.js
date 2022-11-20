@@ -9,7 +9,7 @@ const corsOption = {
 
 const app = express();
 const http = createServer(app);
-
+const SecurityRouter = require("./routes/Security");
 
 const io = new Server(
     http,
@@ -20,6 +20,7 @@ const io = new Server(
 
 app.use(express.json());
 app.use(cors(corsOption));
+app.use(SecurityRouter);
 
 app.get("/", (req, res, next) => {
     res.send("Hello world!");
@@ -28,12 +29,16 @@ app.get("/", (req, res, next) => {
 io.on('connection', function (socket) {
 
     console.log('User Connected');
-    console.log(socket.handshake);
 
     socket.on('Disconnect', () => {
         console.log('User Disconnected')
     })
+
+    socket.on("credentials", cred => {
+        console.log(cred)
+    })
 })
+
 
 http.listen(process.env.PORT, () => {
     console.log(`Server started on port ${process.env.PORT}`);
