@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useMemo, useState} from "react";
+import React, {Fragment, useCallback, useEffect, useMemo, useState} from "react";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
@@ -11,23 +11,22 @@ export default function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const {token} = sessionStorage;
+    const [token, setToken] = useState('');
+    const [users,setUsers] = useState([]);
 
     const socket = useMemo(
-        () => io("ws://localhost:5000",
-            {
-                query: {token},
-                auth: {
-                    token: process.env.JWT_SECRET
-                }
+        () => io("ws://localhost:5000",{
+            auth: {
+                token: token
             }
-        )
-        , []);
+        })
+        , [token]);
 
-    socket.on("connect", () => {
-        console.log("Connected !")
-    })
+        useEffect( () => {
+            socket.on('users', (users) =>{
+                console.log(users)
+            })
+        },[socket])
 
     const login = useCallback(
         () => {
@@ -43,6 +42,8 @@ export default function Login() {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log('Success:', data);
+                    setToken(data.token);
+                    
                 })
                 .catch((error) => {
                     console.error('Error:', error);

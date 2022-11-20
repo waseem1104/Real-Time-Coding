@@ -4,12 +4,18 @@ const bcryptjs = require("bcryptjs");
 const router = new Router();
 const { createToken } = require("../lib/jwt");
 const { ValidationError } = require("sequelize");
-const { User } = require("../models/postgres/User");
+const { User } = require("../models/postgres/");
 
+const formatError = (validationError) => {
+    return validationError.errors.reduce((acc, error) => {
+      acc[error.path] = error.message;
+      return acc;
+    }, {});
+  };
 
 router.post("/login", async (req, res) => {
     try {
-        console.log(User);
+        
         const result = await User.findOne({
             where: {
                 email: req.body.email,
