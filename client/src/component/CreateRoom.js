@@ -11,12 +11,14 @@ export default function CreateRoom(){
 
 
     const [name, setName] = useState('');
+    const [limit,setLimit] = useState(1);
     const [isCreated, setIsCreated] = useState(false);
 
     const socket = useMemo(
         () => io("ws://localhost:5000")
         , []);
 
+        
         useEffect( () => {
             if(isCreated){
                 console.log('test');
@@ -25,7 +27,6 @@ export default function CreateRoom(){
         },[isCreated])
 
         useEffect( () => {
-            
             socket.on('getRoom', (name) => {
                 console.log(name)
             })
@@ -79,9 +80,22 @@ export default function CreateRoom(){
                                             aria-describedby="basic-addon1"
                                         />
                                     </div>
+                                    <div className="input-group mb-3">
+                                        <input
+                                            type="number"
+                                            value={limit}
+                                            onChange={(e) => {
+                                                setLimit(e.target.value)
+                                            }}
+                                            className="form-control"
+                                            placeholder=""
+                                            aria-label="name"
+                                            aria-describedby="basic-addon1"
+                                        />
+                                    </div>
 
                                     <div className="d-flex justify-content-center align-items-center">
-                                        <Button variant="primary" onClick={handleSubmit} >Créer</Button>
+                                        <Button variant="primary" onClick={handleSubmit}>Créer</Button>
                                     </div>
                                 </Card.Body>
                             </Card>
