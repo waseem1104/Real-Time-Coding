@@ -46,7 +46,7 @@ io.use(async(socket, next) => {
   }    
 })
 .on('connection', function(socket) {
-
+    console.log("Connected !");
     // List users connection
     let users = [];
     for (let [id,socket] of io.of("/").sockets){

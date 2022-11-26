@@ -5,28 +5,20 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import {Link, useNavigate} from "react-router-dom";
-import io from 'socket.io-client';
-
+import Cookies from 'universal-cookie';
+import { useSocket } from '../context/SocketContext';
 export default function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [token, setToken] = useState('');
-    const [users,setUsers] = useState([]);
+    const [isConnected, setIsConnected] = useState(false);
+    const socket = useSocket();
 
-    const socket = useMemo(
-        () => io("ws://localhost:5000",{
-            auth: {
-                token: token
-            }
+    useEffect( () => {
+        socket.on('users', (users) =>{
+            console.log(users)
         })
-        , [token]);
-
-        useEffect( () => {
-            socket.on('users', (users) =>{
-                console.log(users)
-            })
-        },[socket])
+    },[socket])
 
     const login = useCallback(
         () => {
@@ -42,7 +34,12 @@ export default function Login() {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log('Success:', data);
-                    setToken(data.token);
+                    const cookies = new Cookies();
+                    cookies.set('token', data.token, {
+                        path: '/',
+                        maxAge: 60 * 60 * 24 * 7,
+                    });
+
                     
                 })
                 .catch((error) => {
