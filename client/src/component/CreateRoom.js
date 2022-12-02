@@ -5,8 +5,7 @@ import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import io from 'socket.io-client';
-
+import { useSocket } from '../context/SocketContext';
 export default function CreateRoom(){
 
 
@@ -14,24 +13,19 @@ export default function CreateRoom(){
     const [limit,setLimit] = useState(1);
     const [isCreated, setIsCreated] = useState(false);
 
-    const socket = useMemo(
-        () => io("ws://localhost:5000")
-        , []);
+    const socket = useSocket();
+    useEffect( () => {
+        if(isCreated){
+            socket.emit('createRoom',name)
+        }
+    },[isCreated])
 
+    useEffect( () => {
+        socket.on('getRoom', (name) => {
+            console.log(name)
+        })
         
-        useEffect( () => {
-            if(isCreated){
-                console.log('test');
-                socket.emit('createRoom',name)
-            }
-        },[isCreated])
-
-        useEffect( () => {
-            socket.on('getRoom', (name) => {
-                console.log(name)
-            })
-            
-        },[socket])
+    },[socket])
 
     const handleSubmit = useCallback(
         () => {

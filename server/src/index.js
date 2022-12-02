@@ -30,28 +30,28 @@ app.use(cors(corsOption));
 
 app.use(SecurityRouter);
 app.use("/admin", AdminRouter);
-app.use("/room", RoomRouter);
+// app.use("/room", RoomRouter);
 
 app.get("/", (req, res, next) => {
     res.send("Hello world!");
 });
 
-// io.use(async(socket, next) => {
-//   if (socket.handshake.auth && socket.handshake.auth.token){
-//     const token = socket.handshake.auth.token;
-//     const payload = await jwt.verify(token, process.env.JWT_SECRET);
-//     socket.user_id = payload.id;
-//     socket.is_admin = payload.isAdmin;
-//     socket.email = payload.email;
-//     next();
+io.use(async(socket, next) => {
+  if (socket.handshake.auth && socket.handshake.auth.token){
+    const token = socket.handshake.auth.token;
+    const payload = await jwt.verify(token, process.env.JWT_SECRET);
+    socket.user_id = payload.id;
+    socket.is_admin = payload.isAdmin;
+    socket.email = payload.email;
+    next();
   
-//   }
-//   else {
-//     next(new Error('Authentication error'));
-//   }    
-// })
+  }
+  else {
+    next(new Error('Authentication error'));
+  }    
+})
 io.on('connection', function(socket) {
-
+    console.log("Connected !");
     // List users connection
     let users = [];
     for (let [id,socket] of io.of("/").sockets){
@@ -63,7 +63,7 @@ io.on('connection', function(socket) {
     socket.emit("users",users);
 
     socket.on('createRoom',(name)=>{
-      socket.broadcast.emit("getRoom",name);
+      socket.emit("getRoom",name);
     });
 });
 
