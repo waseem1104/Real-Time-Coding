@@ -30,7 +30,7 @@ app.use(cors(corsOption));
 
 app.use(SecurityRouter);
 app.use("/admin", AdminRouter);
-// app.use("/room", RoomRouter);
+app.use("/room", RoomRouter);
 
 app.get("/", (req, res, next) => {
     res.send("Hello world!");
@@ -62,8 +62,8 @@ io.on('connection', function(socket) {
 
     socket.emit("users",users);
 
-    socket.on('createRoom',(name)=>{
-      socket.emit("getRoom",name);
+    socket.on('room created',(room)=>{
+      io.sockets.emit("get room",room);
     });
 });
 

@@ -1,9 +1,9 @@
 import {Routes,Route} from "react-router-dom";
-import Login from "./component/Login";
-import Home from './component/Home';
-import Admin from "./component/Admin";
-import CreateRoom from "./component/CreateRoom";
-import ListRooms from "./component/ListRooms";
+import Login from "./component/front/Login";
+import Home from './component/front/Home';
+import Admin from "./component/admin/Admin";
+import CreateRoom from "./component/admin/room/CreateRoom";
+import ListRooms from "./component/front/room/ListRooms";
 import { SocketProvider } from './context/SocketContext'
 function App() {
 
@@ -17,7 +17,11 @@ function App() {
                         <CreateRoom/>
                     </SocketProvider>
                 }/>
-                <Route path="/rooms" element={<ListRooms/>}/>
+                <Route path="/rooms" element={
+                    <SocketProvider>
+                        <ListRooms/>
+                    </SocketProvider>
+                }/>
                 <Route path="/login" element={
                     <SocketProvider>
                         <Login/>

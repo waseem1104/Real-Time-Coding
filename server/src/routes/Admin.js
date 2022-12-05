@@ -7,11 +7,12 @@ const router = new Router();
 
 router.post("/room/new", async (req, res) => {
     const name = req.body.name.trim();
+    const size = req.body.size;
 
     try {
         const result = await Room.create({
             name: name,
-            limit: 1,
+            size: size,
             status:1
         });
 

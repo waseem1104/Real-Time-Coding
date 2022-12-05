@@ -1,10 +1,10 @@
 import React,{ Fragment } from "react";
-import MenuAdmin from "./MenuAdmin";
+import Menu from "./Menu";
 
 export default function Admin(){
     return (
         <Fragment>
-            <MenuAdmin/>
+            <Menu/>
         </Fragment>
     );
 }

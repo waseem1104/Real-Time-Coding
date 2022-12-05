@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import {Link, useNavigate} from "react-router-dom";
 import Cookies from 'universal-cookie';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../../context/SocketContext';
 export default function Login() {
 
     const [email, setEmail] = useState('');

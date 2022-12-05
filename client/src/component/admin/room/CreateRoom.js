@@ -1,35 +1,22 @@
 import { Fragment, useState, useEffect,useCallback,useMemo } from "react";
-import MenuAdmin from "./MenuAdmin";
+import MenuAdmin from "../Menu";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../../../context/SocketContext';
 export default function CreateRoom(){
 
 
     const [name, setName] = useState('');
-    const [limit,setLimit] = useState(1);
-    const [isCreated, setIsCreated] = useState(false);
+    const [size,setSize] = useState(1);
 
     const socket = useSocket();
-    useEffect( () => {
-        if(isCreated){
-            socket.emit('createRoom',name)
-        }
-    },[isCreated])
-
-    useEffect( () => {
-        socket.on('getRoom', (name) => {
-            console.log(name)
-        })
-        
-    },[socket])
 
     const handleSubmit = useCallback(
         () => {
-            const data = {name: name};
+            const data = {name: name, size:size};
 
             fetch('http://localhost:5000/admin/room/new', {
                 method: 'POST',
@@ -41,14 +28,14 @@ export default function CreateRoom(){
                 .then((response) => response.json())
                 .then((data) => {
                     console.log('Success:', data);
-                    setIsCreated(true);
+                    socket.emit('room created',{name:name,size:size})
                     
                 })
                 .catch((error) => {
                     console.error('Error:', error);
                 });
         },
-        [name]
+        [name,size]
     );
 
     return (
@@ -77,9 +64,9 @@ export default function CreateRoom(){
                                     <div className="input-group mb-3">
                                         <input
                                             type="number"
-                                            value={limit}
+                                            value={size}
                                             onChange={(e) => {
-                                                setLimit(e.target.value)
+                                                setSize(e.target.value);
                                             }}
                                             className="form-control"
                                             placeholder=""
