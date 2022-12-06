@@ -23,9 +23,9 @@ function App() {
                     </SocketProvider>
                 }/>
                 <Route path="/login" element={
-                    <SocketProvider>
+                
                         <Login/>
-                    </SocketProvider>
+                
                 }/>
             </Routes>
         </>

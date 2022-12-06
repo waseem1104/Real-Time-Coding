@@ -9,15 +9,16 @@ import Cookies from 'universal-cookie';
 import { useSocket } from '../../context/SocketContext';
 export default function Login() {
 
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isConnected, setIsConnected] = useState(false);
-    const socket = useSocket();
-    useEffect( () => {
-        socket.on('users', (users) =>{
-            console.log(users)
-        })
-    },[socket])
+    // const socket = useSocket();
+    // useEffect( () => {
+    //     socket.on('users', (users) =>{
+    //         console.log(users)
+    //     })
+    // },[socket])
 
     const login = useCallback(
         () => {
@@ -38,6 +39,8 @@ export default function Login() {
                         path: '/',
                         maxAge: 60 * 60 * 24 * 7,
                     });
+
+                    navigate("/rooms", { replace: false });
 
                     
                 })

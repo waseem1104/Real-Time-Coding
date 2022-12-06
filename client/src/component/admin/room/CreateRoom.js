@@ -15,6 +15,7 @@ export default function CreateRoom(){
 
     const socket = useSocket();
 
+
     const handleSubmit = useCallback(
         () => {
             const data = {name: name, size:size};

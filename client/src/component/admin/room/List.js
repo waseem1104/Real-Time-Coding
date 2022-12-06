@@ -2,10 +2,11 @@ import React from 'react';
 import { Fragment, useState, useEffect,useCallback,useMemo } from "react";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import Cookies from 'universal-cookie';
 export default function List({socket}){
 
     const [rooms, setRooms] = useState([]);
-
+    // const cookies = new Cookies();
     useEffect( () => {
         socket.on("get room", (room) =>{
             let new_room = rooms.slice();

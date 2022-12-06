@@ -38,6 +38,7 @@ app.get("/", (req, res, next) => {
 
 io.use(async(socket, next) => {
   if (socket.handshake.auth && socket.handshake.auth.token){
+  
     const token = socket.handshake.auth.token;
     const payload = await jwt.verify(token, process.env.JWT_SECRET);
     socket.user_id = payload.id;
