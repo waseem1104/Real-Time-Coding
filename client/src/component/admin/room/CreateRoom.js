@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useSocket } from '../../../context/SocketContext';
+import List from "./List";
 export default function CreateRoom(){
 
 
@@ -81,6 +82,9 @@ export default function CreateRoom(){
                                 </Card.Body>
                             </Card>
                         </div>
+                    </Col>
+                    <Col>
+                        <List socket={socket}/>
                     </Col>
                 </Row>
             </Container>

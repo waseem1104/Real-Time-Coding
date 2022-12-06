@@ -28,5 +28,15 @@ router.post("/room/new", async (req, res) => {
     }
 });
 
+router.get("/room/all", async (req, res) => {
+    try {
+        const result = await Room.findAll();
+        res.json(result);
+    } catch (error) {
+        res.sendStatus(500);
+        console.error(error);
+    }
+});
+
 
 module.exports = router;

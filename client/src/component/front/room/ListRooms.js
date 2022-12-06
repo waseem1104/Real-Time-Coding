@@ -27,7 +27,7 @@ export default function ListRooms(){
     useEffect( () => {
         socket.on("get room", (room) =>{
             let new_room = rooms.slice();
-            new_room.push(room);
+            new_room.unshift(room);
             setRooms(new_room);
         })
     },[rooms,socket])
