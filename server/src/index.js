@@ -36,6 +36,16 @@ app.get("/", (req, res, next) => {
     res.send("Hello world!");
 });
 
+
+const sessions = new Map();
+const saveSession = (id,session) =>{
+  sessions.set(id, session);
+}
+
+const getSessions = () => {
+  return [...sessions.values()];
+}
+
 io.use(async(socket, next) => {
   if (socket.handshake.auth && socket.handshake.auth.token){
   
@@ -44,6 +54,7 @@ io.use(async(socket, next) => {
     socket.user_id = payload.id;
     socket.is_admin = payload.isAdmin;
     socket.email = payload.email;
+    socket.connected = true;
     next();
   
   }
@@ -53,15 +64,15 @@ io.use(async(socket, next) => {
 })
 io.on('connection', function(socket) {
     console.log("Connected !");
-    // List users connection
-    let users = [];
-    for (let [id,socket] of io.of("/").sockets){
-      users.push({
-        email : socket.email
-      })
-    }
 
-    socket.emit("users",users);
+    saveSession(socket.user_id, {userId:socket.user_id, email:socket.email,connected:socket.connected })
+    let usersConnected = [];
+    getSessions().forEach(element => {
+      if (element.userId != socket.user_id)
+        usersConnected.push({userId: element.userId, email:element.email,connected:element.connected })
+    });
+
+    socket.emit("users",usersConnected);
 
     socket.on('room created',(room)=>{
       io.sockets.emit("get room",room);

@@ -31,6 +31,12 @@ export default function ListRooms(){
             setRooms(new_room);
         })
     },[rooms,socket])
+
+    useEffect( () => {
+        socket.on("users", (users) =>{
+          console.log(users);
+        })
+    },[socket])
     return (
         <Fragment>
             <Menu/>
