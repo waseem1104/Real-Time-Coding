@@ -32,11 +32,6 @@ export default function ListRooms(){
         })
     },[rooms,socket])
 
-    useEffect( () => {
-        socket.on("users", (users) =>{
-        console.log(users);
-        })
-    },[socket])
     return (
         <Fragment>
             <Menu/>

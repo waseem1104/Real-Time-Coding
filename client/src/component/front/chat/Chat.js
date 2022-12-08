@@ -15,6 +15,16 @@ export default function Chat(){
     const handleSelected = useCallback( (user) =>{
         setUserSelected(user)
     });
+
+    useEffect( () => {
+        socket.on('user disconnected',({userId, email, connected}) => {
+            const getUser = users.findIndex( (element) => element.userId == userId )
+            const newUsers = users.slice();
+            newUsers.splice(getUser,1);
+            setUsers([...newUsers,{userId, email, connected}]);
+        })
+    },[socket])
+
     useEffect( () => {
         socket.on('users',(usersConnected) => {
             setUsers(usersConnected);
@@ -25,10 +35,10 @@ export default function Chat(){
 
         socket.on('new user',({userId, email, connected}) => {
             
-                const checkUser = users.findIndex( (element) => element.userId == userId);
-                if (checkUser < 0){
-                    setUsers([...users, {userId,email,connected}])
-                }
+            const checkUser = users.findIndex( (element) => element.userId == userId);
+            if (checkUser < 0){
+                setUsers([...users, {userId,email,connected}])
+            }
             
         })
     },[socket])
@@ -47,9 +57,19 @@ export default function Chat(){
                             { 
                                 users.map((user,index) => {
                                     return (
-                                        <ListGroup.Item key={index} onClick={ () => handleSelected(user)}> 
+                                        <ListGroup.Item className="user" key={index} onClick={ () => handleSelected(user)}> 
                                             { user.email }
-                                            <p className="m-0"> { user.connected ? "En ligne" : "Hors ligne" }</p>
+                                            { user.connected ? 
+                                                <div className="d-flex">
+                                                    <p className="m-0"> En ligne</p>
+                                                    <span className="online mx-1"></span>
+                                                </div> 
+                                            : 
+                                                <div className="d-flex">
+                                                    <p className="m-0"> Hors ligne</p>
+                                                    <span className="offline mx-1"></span>
+                                                </div> 
+                                            }
                                         </ListGroup.Item>
                                     );
                                 })
