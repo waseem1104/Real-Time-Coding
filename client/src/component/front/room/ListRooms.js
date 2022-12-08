@@ -34,7 +34,7 @@ export default function ListRooms(){
 
     useEffect( () => {
         socket.on("users", (users) =>{
-          console.log(users);
+        console.log(users);
         })
     },[socket])
     return (

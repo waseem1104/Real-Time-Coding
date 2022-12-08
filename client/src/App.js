@@ -4,6 +4,7 @@ import Home from './component/front/Home';
 import Admin from "./component/admin/Admin";
 import CreateRoom from "./component/admin/room/CreateRoom";
 import ListRooms from "./component/front/room/ListRooms";
+import Chat from "./component/front/chat/Chat";
 import { SocketProvider } from './context/SocketContext'
 function App() {
 
@@ -23,9 +24,13 @@ function App() {
                     </SocketProvider>
                 }/>
                 <Route path="/login" element={
-                
-                        <Login/>
-                
+                    <Login/>
+                }/>
+
+                <Route path="/chat" element={
+                    <SocketProvider>
+                        <Chat/>   
+                    </SocketProvider>    
                 }/>
             </Routes>
         </>

@@ -38,10 +38,10 @@ app.get("/", (req, res, next) => {
 
 
 const sessions = new Map();
+
 const saveSession = (id,session) =>{
   sessions.set(id, session);
 }
-
 const getSessions = () => {
   return [...sessions.values()];
 }
@@ -64,15 +64,22 @@ io.use(async(socket, next) => {
 })
 io.on('connection', function(socket) {
     console.log("Connected !");
-
-    saveSession(socket.user_id, {userId:socket.user_id, email:socket.email,connected:socket.connected })
-    let usersConnected = [];
+  
+    saveSession(socket.handshake.auth.token, {userId:socket.user_id, email:socket.email,connected:socket.connected })
+    let users = [];
     getSessions().forEach(element => {
       if (element.userId != socket.user_id)
-        usersConnected.push({userId: element.userId, email:element.email,connected:element.connected })
+      users.push({userId: element.userId, email:element.email,connected:element.connected })
     });
+  
 
-    socket.emit("users",usersConnected);
+    socket.emit("users",users);
+
+    socket.broadcast.emit("new user",{
+      userId: socket.user_id,
+      email:socket.email,
+      connected:socket.connected
+    })
 
     socket.on('room created',(room)=>{
       io.sockets.emit("get room",room);
