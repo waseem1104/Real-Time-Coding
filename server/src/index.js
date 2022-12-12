@@ -98,7 +98,7 @@ io.on('connection', function(socket) {
 
       io.to(room).emit("message room",{
         client: socket.user_id,
-        message
+        content: message
       })
     })
     socket.on('disconnect', () => {

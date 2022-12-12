@@ -17,10 +17,13 @@ export default function ChatRoom(){
     const [message,setMessage] = useState('');
 
     useEffect( () => {
-        socket.on('message room',({client,message}) => {
-            console.log(message);
+        socket.on('message room',(message) => {
+
+            let new_messages = messages.splice();
+            new_messages.push(message)
+            setMessages(new_messages);
         })
-    },[socket])
+    },[messages,socket])
 
     useEffect( () => {
         socket.emit("join","esgi");
@@ -46,7 +49,19 @@ export default function ChatRoom(){
                     <Col>
                     <Card style={{height: '30rem'}}>
                             <Card.Body>
-
+                            {
+                                messages.map( (message,i) =>{
+                                    return(
+                                        <div className="message mb-2" key={i}>
+                                            {/* <p className="m-0">{message.email}</p> */}
+                                            <div className="content px-2">
+                                                {message.content}
+                                                {/* <p className="m-0">{message.createdAt}</p> */}
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            }
                             </Card.Body>
                             <Card.Footer>
                             <InputGroup>
