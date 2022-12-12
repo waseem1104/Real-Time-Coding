@@ -25,6 +25,19 @@ export default function ListRooms(){
     },[]);
 
     useEffect( () => {
+
+        if (rooms.length > 0){
+            socket.on("get room updated", (room) =>{
+
+                let getRooms = rooms.slice();
+                let found = getRooms.findIndex( element => element.id == room.id);
+                getRooms[found].name = room.name;
+                setRooms(getRooms);
+            })
+        }
+    },[rooms,socket])
+
+    useEffect( () => {
         socket.on("get room", (room) =>{
             let new_room = rooms.slice();
             new_room.unshift(room);
@@ -41,7 +54,7 @@ export default function ListRooms(){
                     { 
                         rooms.map((room,index) => {
                             return (
-                                <Col key={index}>
+                                <Col md="3" key={room.id} id={room.id}>
                                 <div className={"mt-5"}>
                                     <Card style={{width: '15rem'}}>
                                         <Card.Img variant="top" src="https://picsum.photos/500" />

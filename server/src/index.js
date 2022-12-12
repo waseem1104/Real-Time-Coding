@@ -64,7 +64,7 @@ io.use(async(socket, next) => {
 })
 io.on('connection', function(socket) {
     console.log("Connected !");
-
+  
     saveSession(socket.handshake.auth.token, {userId:socket.user_id, email:socket.email,connected:socket.connected })
     let users = [];
     getSessions().forEach(element => {
@@ -83,6 +83,10 @@ io.on('connection', function(socket) {
 
     socket.on('room created',(room)=>{
       io.sockets.emit("get room",room);
+    });
+
+    socket.on('room updated',(room)=>{
+      socket.broadcast.emit("get room updated",room);
     });
 
     socket.on('disconnect', () => {

@@ -5,6 +5,13 @@ const {ValidationError, QueryTypes} = require("sequelize");
 
 const router = new Router();
 
+const formatError = (validationError) => {
+    return validationError.errors.reduce((acc, error) => {
+        acc[error.path] = error.message;
+        return acc;
+    }, {});
+};
+
 router.post("/room/new", async (req, res) => {
     const name = req.body.name.trim();
     const size = req.body.size;
@@ -35,6 +42,49 @@ router.get("/room/all", async (req, res) => {
     } catch (error) {
         res.sendStatus(500);
         console.error(error);
+    }
+});
+
+router.get("/room/:id", async (req, res) => {
+    try {
+      const result = await Room.findByPk(parseInt(req.params.id, 10));
+      if (!result) {
+        res.status(404);
+        res.send({
+          success: false,
+        });
+      } else {
+        res.json(result);
+      }
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+  });
+
+
+router.put("/room/edit/:id", async (req, res) => {
+    
+    try {   
+        const [nbLines, [result]] = await Room.update(req.body, {
+            where: {
+                id: parseInt(req.params.id, 10),
+            },
+            returning: true,
+        });
+        if (!nbLines) {
+            res.sendStatus(404);
+        } else {
+            res.json(result);
+        }
+    } catch (error) {
+        console.log(error);
+        if (error instanceof ValidationError) {
+            res.status(422).json(formatError(error));
+        } else {
+            res.sendStatus(500);
+            console.error(error);
+        }
     }
 });
 

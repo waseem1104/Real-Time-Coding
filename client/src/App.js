@@ -7,6 +7,7 @@ import ListRooms from "./component/front/room/ListRooms";
 import Chat from "./component/front/chat/Chat";
 import { SocketProvider } from './context/SocketContext'
 import './App.css'
+import Edit from "./component/admin/room/Edit";
 function App() {
 
     return (
@@ -19,6 +20,14 @@ function App() {
                         <CreateRoom/>
                     </SocketProvider>
                 }/>
+
+                <Route path="/admin/room/edit/:id" element={
+                    <SocketProvider>
+                        <Edit/>
+                    </SocketProvider>
+                }/>
+
+                
                 <Route path="/rooms" element={
                     <SocketProvider>
                         <ListRooms/>
