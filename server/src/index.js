@@ -73,6 +73,7 @@ io.on('connection', function(socket) {
     });
   
 
+
     socket.emit("users",users);
 
     socket.broadcast.emit("new user",{
@@ -89,6 +90,17 @@ io.on('connection', function(socket) {
       socket.broadcast.emit("get room updated",room);
     });
 
+    socket.on('join',(room)=>{
+      socket.join(room);
+    })
+
+    socket.on('message room',({message,room}) => {
+
+      io.to(room).emit("message room",{
+        client: socket.user_id,
+        message
+      })
+    })
     socket.on('disconnect', () => {
       socket.broadcast.emit('user disconnected',{
         userId: socket.user_id,
