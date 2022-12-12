@@ -17,13 +17,14 @@ export default function ChatRoom(){
     const [message,setMessage] = useState('');
 
     useEffect( () => {
-        socket.on('message room',(message) => {
+        socket.on('message room',({client,content}) => {
 
-            let new_messages = messages.splice();
-            new_messages.push(message)
+            let new_messages = messages.slice();
+            new_messages.push({content})
             setMessages(new_messages);
+            
         })
-    },[messages,socket])
+    },[socket,messages])
 
     useEffect( () => {
         socket.emit("join","esgi");
