@@ -46,6 +46,7 @@ export default function ChatRoom(){
             <Menu/>
 
             <Container>
+                <h1 className={"mt-5 fs-4"}>#ESGI</h1>
                 <Row>
                     <Col>
                     <Card style={{height: '30rem'}}>
