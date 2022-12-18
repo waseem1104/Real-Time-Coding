@@ -8,11 +8,11 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { useSocket } from '../../../context/SocketContext';
+// import { useSocket } from '../../../context/SocketContext';
 
-export default function ChatRoom(){
+export default function ChatRoom({socket,roomSelected}){
 
-    const socket = useSocket();
+    // const socket = useSocket();
     const [messages,setMessages] = useState([]);
     const [message,setMessage] = useState('');
 
@@ -27,15 +27,22 @@ export default function ChatRoom(){
     },[socket,messages])
 
     useEffect( () => {
-        socket.emit("join","esgi");
-    },[])
+
+        setMessages([]);
+
+        socket.emit("join",roomSelected.name);
+
+        return () => {
+            socket.emit('quit',roomSelected.name);
+        }
+    },[roomSelected])
 
 
     const handleSubmit = useCallback( () =>{
 
         socket.emit('message room', {
             message: message,
-            room : "esgi"
+            room : roomSelected.name
         })
 
     },[message]);
@@ -43,12 +50,11 @@ export default function ChatRoom(){
 
     return (
         <Fragment>
-            <Menu/>
+            {/* <Menu/> */}
 
-            <Container>
-                <h1 className={"mt-5 fs-4"}>#ESGI</h1>
-                <Row>
-                    <Col>
+                {/* <h1 className={"mt-5 fs-4"}>#ESGI</h1> */}
+                    <h2 className="fs-5 mb-3">{roomSelected.name}</h2>
+                    <hr/>
                     <Card style={{height: '30rem'}}>
                             <Card.Body>
                             {
@@ -76,9 +82,7 @@ export default function ChatRoom(){
                             </InputGroup>
                             </Card.Footer>
                         </Card>
-                    </Col>
-                </Row>
-            </Container>
+        
         </Fragment>
     );
 

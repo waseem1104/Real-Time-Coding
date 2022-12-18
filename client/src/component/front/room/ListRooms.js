@@ -1,15 +1,18 @@
-import { Fragment,useState, useEffect, useMemo} from "react";
+import { Fragment,useState, useEffect, useMemo, useCallback} from "react";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Menu from "../Menu";
+import ChatRoom from "./ChatRoom";
 import { useSocket } from '../../../context/SocketContext';
 
 export default function ListRooms(){
 
     const [rooms,setRooms] = useState([]);
+    const [roomSelected, setRoomSelected] = useState([]);
     const socket = useSocket();
     useEffect( () => {
 
@@ -45,33 +48,57 @@ export default function ListRooms(){
         })
     },[rooms,socket])
 
+
+    const handleSelected = useCallback( (room) =>{
+        setRoomSelected(room)
+    });
+
     return (
         <Fragment>
             <Menu/>
             <Container>
                 <h1 className={"mt-5 fs-2"}>Les salons</h1>
-                <Row>
-                    { 
-                        rooms.map((room,index) => {
-                            return (
-                                <Col md="3" key={room.id} id={room.id}>
-                                <div className={"mt-5"}>
-                                    <Card style={{width: '15rem'}}>
-                                        <Card.Img variant="top" src="https://picsum.photos/500" />
-                                        <Card.Body>
-                                            <Card.Title>{room.name}</Card.Title>
-                                            <Card.Subtitle className="mb-2 text-muted">0 / {room.size} utilisateurs</Card.Subtitle>
-                                            <Button size="sm" variant="outline-dark">
-                                                Rejoindre
-                                            </Button>
-                                        </Card.Body>
-                                    </Card>
-                                </div>
-                                </Col>
-                            );
-                        })
-                    }
+                <Row className={"mt-5"}>
+                    <Col md="3">
+                        <ListGroup>
+
+                            { 
+                                rooms.map((room,index) => {
+                                    return (
+                                        <ListGroup.Item className="room d-flex" key={room.id} id={room.id} onClick={ () => handleSelected(room)}>
+                                            <img src={`https://picsum.photos/50`} className="rounded mx-2"></img>
+                                            <div>
+                                                <div>{ room.name }</div>
+                                                <p className="m-0">0 / {room.size} utilisateurs</p>
+                                            </div>
+                                        
+                                        </ListGroup.Item>
+                                    );
+                                })
+                            }
+                        </ListGroup>
+                    </Col>
+                    <Col md="7">
+                        { roomSelected.name  && 
+                            <ChatRoom socket={socket} roomSelected={roomSelected}  />
+                        }
+                    </Col>
+                    <Col md="2">
+                        <ListGroup>
+
+                            { 
+                                rooms.map((room,index) => {
+                                    return (
+                                        <ListGroup.Item className="room" key={room.id} id={room.id} onClick={ () => handleSelected(room)}> 
+                                            { room.name }
+                                        </ListGroup.Item>
+                                    );
+                                })
+                            }
+                        </ListGroup>
+                    </Col>
                 </Row>
+                
             </Container>
         </Fragment>
     )

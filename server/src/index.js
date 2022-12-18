@@ -91,6 +91,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('join',(room)=>{
+      console.log('ok');
       socket.join(room);
     })
 
@@ -100,6 +101,11 @@ io.on('connection', function(socket) {
         client: socket.user_id,
         content: message
       })
+    })
+
+    socket.on("quit",(room) =>{
+      console.log('test');
+      socket.leave(room);
     })
     socket.on('disconnect', () => {
       socket.broadcast.emit('user disconnected',{
