@@ -17,10 +17,10 @@ export default function ChatRoom({socket,roomSelected}){
     const [message,setMessage] = useState('');
 
     useEffect( () => {
-        socket.on('message room',({client,content}) => {
+        socket.on('message room',({client,email,content}) => {
 
             let new_messages = messages.slice();
-            new_messages.push({content})
+            new_messages.push({email,content})
             setMessages(new_messages);
             
         })
@@ -28,7 +28,16 @@ export default function ChatRoom({socket,roomSelected}){
 
     useEffect( () => {
 
-        setMessages([]);
+
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+                setMessages(JSON.parse(request.responseText));
+            }
+        }
+        request.open( "GET", `http://localhost:5000/room/${roomSelected.id}/messages`, false );
+        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.send();
 
         socket.emit("join",roomSelected.name);
 
@@ -40,19 +49,31 @@ export default function ChatRoom({socket,roomSelected}){
 
     const handleSubmit = useCallback( () =>{
 
-        socket.emit('message room', {
-            message: message,
-            room : roomSelected.name
-        })
+
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+
+                socket.emit('message room', {
+                    message: message,
+                    room : roomSelected.name
+                })
+            }
+        }
+        request.open( "POST", `http://localhost:5000/room/message/new`, false );
+        request.setRequestHeader("Content-type", "application/json");
+        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.send(JSON.stringify({
+            "roomid": roomSelected.id,
+            "content": message
+        }));
+
 
     },[message]);
 
 
     return (
         <Fragment>
-            {/* <Menu/> */}
-
-                {/* <h1 className={"mt-5 fs-4"}>#ESGI</h1> */}
                     <h2 className="fs-5 mb-3">{roomSelected.name}</h2>
                     <hr/>
                     <Card style={{height: '30rem'}}>
@@ -61,7 +82,7 @@ export default function ChatRoom({socket,roomSelected}){
                                 messages.map( (message,i) =>{
                                     return(
                                         <div className="message mb-2" key={i}>
-                                            {/* <p className="m-0">{message.email}</p> */}
+                                            <p className="m-0">{message.email}</p>
                                             <div className="content px-2">
                                                 {message.content}
                                                 {/* <p className="m-0">{message.createdAt}</p> */}

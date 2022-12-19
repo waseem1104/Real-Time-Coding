@@ -35,11 +35,11 @@ function App() {
                     </SocketProvider>
                 }/>
 
-                <Route path="/room/:id" element={
+                {/* <Route path="/room/:id" element={
                     <SocketProvider>
                         <ChatRoom/>
                     </SocketProvider>
-                }/>
+                }/> */}
 
                 <Route path="/login" element={
                     <Login/>
