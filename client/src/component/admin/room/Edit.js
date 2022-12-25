@@ -8,10 +8,16 @@ import Col from 'react-bootstrap/Col';
 import { useSocket } from '../../../context/SocketContext';
 import { Link, useParams } from "react-router-dom";
 import Cookies from 'universal-cookie';
+import Alert from 'react-bootstrap/Alert';
 export default function Edit(){
 
     const [name, setName] = useState('');
     const [size,setSize] = useState(1);
+    // const [count,setCount] = useState(0);
+
+
+
+    const [alertSize,setAlertSize] = useState(false);
 
     const params = useParams();
     const cookies = new Cookies();
@@ -32,21 +38,38 @@ export default function Edit(){
         request.send();
     }, []);
 
-
     const handleSubmit = useCallback( () => {
+        let count = 0;
         const request = new XMLHttpRequest();
+
+
         request.onreadystatechange = function() {
             if (request.readyState == XMLHttpRequest.DONE) {
-                socket.emit('room updated',{id:JSON.parse(request.responseText).id,name:JSON.parse(request.responseText).name,size:JSON.parse(request.responseText).size,createdAt:JSON.parse(request.responseText).createdAt})
+                count = JSON.parse(request.responseText)[0].user_nb
             }
         }
-        request.open( "PUT", `http://localhost:5000/admin/room/edit/${params.id}`, false );
-        request.setRequestHeader("Content-type", "application/json");
+        request.open( "GET", `http://localhost:5000/admin/room/${params.id}/count`, false );
         // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
-        request.send(JSON.stringify({
-            "name": name,
-            "size": size
-        }));
+        request.send();
+
+        if (size >= count){
+            setAlertSize(false);
+            request.onreadystatechange = function() {
+                if (request.readyState == XMLHttpRequest.DONE) {
+                    socket.emit('room updated',{id:JSON.parse(request.responseText).id,name:JSON.parse(request.responseText).name,size:JSON.parse(request.responseText).size,createdAt:JSON.parse(request.responseText).createdAt})
+                }
+            }
+            request.open( "PUT", `http://localhost:5000/admin/room/edit/${params.id}`, false );
+            request.setRequestHeader("Content-type", "application/json");
+            // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+            request.send(JSON.stringify({
+                "name": name,
+                "size": size
+            }));
+        }else{
+            setAlertSize(true);
+        }
+
 
     },[name,size])
 
@@ -58,6 +81,12 @@ export default function Edit(){
             <Container>
                 <Row>
                     <Col>
+
+                        {alertSize ?
+                            <Alert key="danger" variant="danger" className="mt-3">
+                                Erreur au niveau de la taille du salon {name}. Des utilisateurs sont présents dans ce salon.
+                            </Alert> : ''
+                        }
                         <div className={"d-flex justify-content-center mt-5"}>
                             <Card style={{width: '25rem'}}>
                                 <Card.Body>
