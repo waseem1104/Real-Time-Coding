@@ -4,7 +4,7 @@ const cors = require('cors');
 const {Server} = require("socket.io");
 const {createServer} = require("http");
 const jwt = require("jsonwebtoken");
-
+const {RoomUser } = require("./models/postgres");
 
 const SecurityRouter = require("./routes/Security");
 const AdminRouter = require("./routes/Admin");
@@ -63,7 +63,6 @@ io.use(async(socket, next) => {
   }    
 })
 io.on('connection', function(socket) {
-    console.log("Connected !");
   
     saveSession(socket.handshake.auth.token, {userId:socket.user_id, email:socket.email,connected:socket.connected })
     let users = [];
@@ -72,7 +71,6 @@ io.on('connection', function(socket) {
       users.push({userId: element.userId, email:element.email,connected:element.connected })
     });
   
-
 
     socket.emit("users",users);
 
@@ -91,11 +89,12 @@ io.on('connection', function(socket) {
     });
 
     socket.on('join',(room)=>{
+      io.sockets.emit('update count user room join',room);
       socket.join(room);
+      socket.room = room;
     })
 
     socket.on('message room',({message,room}) => {
-
       io.to(room).emit("message room",{
         client: socket.user_id,
         email: socket.email,
@@ -104,14 +103,36 @@ io.on('connection', function(socket) {
     })
 
     socket.on("quit",(room) =>{
+      io.sockets.emit('update count user room leave',room);
       socket.leave(room);
+      socket.room = null;
     })
+
+
     socket.on('disconnect', () => {
       socket.broadcast.emit('user disconnected',{
         userId: socket.user_id,
         email:socket.email,
         connected:false
       })
+
+      // User disconnect - leave room and update database.
+      if (socket.room != null){
+
+        io.sockets.emit('update count user room leave',socket.room);
+        socket.leave(socket.room);
+
+        RoomUser.destroy({
+          where: {
+            roomid: socket.room,
+            userid: socket.user_id,
+          },
+        });
+
+        socket.room = null;
+      }
+
+      
     });
 });
 

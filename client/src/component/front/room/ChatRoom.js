@@ -8,11 +8,9 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-// import { useSocket } from '../../../context/SocketContext';
 
 export default function ChatRoom({socket,roomSelected}){
 
-    // const socket = useSocket();
     const [messages,setMessages] = useState([]);
     const [message,setMessage] = useState('');
 
@@ -25,6 +23,7 @@ export default function ChatRoom({socket,roomSelected}){
             
         })
     },[socket,messages])
+    
 
     useEffect( () => {
 
@@ -39,16 +38,31 @@ export default function ChatRoom({socket,roomSelected}){
         // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
-        socket.emit("join",roomSelected.name);
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+            }
+        }
+        request.open( "POST", `http://localhost:5000/room/join`, false );
+        request.setRequestHeader("Content-type", "application/json");
+        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.send(JSON.stringify({
+            "roomid" : roomSelected.id
+        }));
+
+        socket.emit("join",roomSelected.id);  
 
         return () => {
-            socket.emit('quit',roomSelected.name);
+
+            request.open( "DELETE", `http://localhost:5000/room/leave/${roomSelected.id}`, false ); 
+            request.setRequestHeader("Content-type", "application/json");
+            // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+            request.send();
+            socket.emit('quit',roomSelected.id);
         }
     },[roomSelected])
 
 
     const handleSubmit = useCallback( () =>{
-
 
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -56,7 +70,7 @@ export default function ChatRoom({socket,roomSelected}){
 
                 socket.emit('message room', {
                     message: message,
-                    room : roomSelected.name
+                    room : roomSelected.id
                 })
             }
         }
