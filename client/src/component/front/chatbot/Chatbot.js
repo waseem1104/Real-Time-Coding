@@ -12,12 +12,27 @@ import { useSocket } from '../../../context/SocketContext';
 
 export default function Chatbot(){
 
-    
+    const socket = useSocket();
+
+    const [messages,setMessages] = useState([]);
+
+    useEffect( () => {
+
+        socket.emit('starting chatbot',({client: 1}));
+
+        socket.on('starting chatbot',({content}) => {
+            console.log(content);
+        })
+
+    },[])
     return(
         <Fragment>
             <Menu/>
+            
             <Container>
+
                 <Row className="mt-5">
+                <h2 className="fs-5 mb-3">Chatbot</h2>
                     <Col>
                     <Card style={{height: '30rem'}}>
                             <Card.Body>

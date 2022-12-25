@@ -85,6 +85,14 @@ io.on('connection', function(socket) {
       io.sockets.emit("get room",room);
     });
 
+
+    socket.on('starting chatbot', ({client}) => {
+
+      socket.to(client).emit("starting chatbot",{
+        content: "hello"
+      })
+    })
+
     socket.on('disconnect', () => {
       socket.broadcast.emit('user disconnected',{
         userId: socket.user_id,
