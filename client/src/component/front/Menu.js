@@ -17,6 +17,7 @@ export default function Menu(){
                             <Link to={'/login'} className={"nav-link"}>Connexion</Link>
                             <Link to={'/login'} className={"nav-link"}>Inscription</Link>
                             <Link to={'/chat'} className={"nav-link"}>Chat</Link>
+                            <Link to={'/rooms'} className={"nav-link"}>Salons</Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
