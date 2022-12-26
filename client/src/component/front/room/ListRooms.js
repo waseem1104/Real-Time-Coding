@@ -47,6 +47,7 @@ export default function ListRooms(){
                 let getRooms = rooms.slice();
                 let found = getRooms.findIndex( element => element.id == room.id);
                 getRooms[found].name = room.name;
+                getRooms[found].size = room.size;
                 setRooms(getRooms);
             })
         }
