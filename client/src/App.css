@@ -12,14 +12,14 @@
     height: 10px;
 }
 
-.user{
+.user, .room{
     cursor: pointer; 
 }
 
-.user:hover{
+.user:hover, .room:hover{
     border-left: 2px solid black;
 }
-.user p {
+.user p, .room p{
     font-size: 14px;
     color: rgba(0,0,0,.55);
 }
