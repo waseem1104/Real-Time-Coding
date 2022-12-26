@@ -71,7 +71,7 @@ io.on('connection', function(socket) {
       users.push({userId: element.userId, email:element.email,connected:element.connected })
     });
   
-
+    socket.join(socket.user_id);
     socket.emit("users",users);
 
     socket.broadcast.emit("new user",{
