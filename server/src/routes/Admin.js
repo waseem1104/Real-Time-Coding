@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const {Room} = require("../models/postgres");
 const {ValidationError, QueryTypes} = require("sequelize");
-
+const connection = require("../models/postgres/db");
 
 const router = new Router();
 
@@ -62,6 +62,24 @@ router.get("/room/:id", async (req, res) => {
     }
   });
 
+
+  router.get("/room/:id/count", async (req, res) => {
+    try {
+      const result = await connection.query(
+        "SELECT COUNT(room_user.roomid) as user_nb FROM room_user WHERE roomid = :id", 
+      { 
+        type: QueryTypes.SELECT,
+        replacements: { 
+          id: parseInt(req.params.id, 10)
+        } 
+      }
+      );
+      res.json(result);
+    } catch (error) {
+      res.sendStatus(500);
+      console.error(error);
+    }
+  });
 
 router.put("/room/edit/:id", async (req, res) => {
     
