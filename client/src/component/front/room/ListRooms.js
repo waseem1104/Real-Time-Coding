@@ -8,6 +8,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Menu from "../Menu";
 import ChatRoom from "./ChatRoom";
 import { useSocket } from '../../../context/SocketContext';
+import Notification from "../Notification";
 
 export default function ListRooms(){
 
@@ -161,7 +162,7 @@ export default function ListRooms(){
                         </ListGroup>
                     </Col> */}
                 </Row>
-                
+                <Notification />
             </Container>
         </Fragment>
     )
