@@ -6,6 +6,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useSocket } from '../../../context/SocketContext';
+import Notification from "../Notification";
 export default function Chat(){
 
     const socket = useSocket();
@@ -82,6 +83,7 @@ export default function Chat(){
                         <hr/>
                     </Col>
                 </Row>
+                <Notification />
             </Container>
             
         </Fragment>

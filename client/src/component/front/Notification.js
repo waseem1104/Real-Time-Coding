@@ -1,34 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 
 function Notification() {
 
-    const [position, setPosition] = useState('top-start');
-    const [show, setShow] = useState(false);
+    const [facts, setFacts] = useState([]);
+    const [listening, setListening] = useState(false);
+    const [show, setShow] = useState(true);
 
-    const [notifications, setNotifications] = useState("");
-    const evtSource = new EventSource('http://localhost:5000')
 
-    useEffect( () => {
-        evtSource.onmessage = (e) => {
-            setNotifications(e.data);
+    useEffect(() => {
+        if (!listening) {
+            const events = new EventSource('http://localhost:5000/events');
+
+            events.onmessage = (event) => {
+                const parsedData = JSON.parse(event.data);
+
+                setFacts((facts) => facts.concat(parsedData));
+            };
+
+            setListening(true);
         }
-    }, []);
 
-    if (notifications !== "")
+
+    }, [listening, facts]);
+
     return (
         <ToastContainer containerPosition={'absolute'} position={"top-end"}>
-            <Toast onClose={()=>{setNotifications("")}} bg={"primary"} delay={5000} autohide>
-                <Toast.Header>
-                    <strong className="me-auto">Notification</strong>
-                </Toast.Header>
-                <Toast.Body>{notifications}</Toast.Body>
-            </Toast>
-
+            {
+                facts.map((fact, i) =>
+                    <Toast key={i}
+                           onClose={() => setFacts([])}
+                           autohide
+                           bg={"primary"}>
+                        <Toast.Header>
+                            <strong className="me-auto">Notification</strong>
+                        </Toast.Header>
+                        <Toast.Body>{fact.info}</Toast.Body>
+                    </Toast>
+                )
+            }
         </ToastContainer>
     );
-    else return( <></>)
 }
 
 export default Notification;
