@@ -5,7 +5,10 @@ const {Server} = require("socket.io");
 const {createServer} = require("http");
 const jwt = require("jsonwebtoken");
 const {RoomUser } = require("./models/postgres");
-
+const { Planning } = require("./models/postgres");
+const connection  = require("./models/postgres/db");
+const {QueryTypes } = require("sequelize");
+const moment = require('moment');
 const SecurityRouter = require("./routes/Security");
 const AdminRouter = require("./routes/Admin");
 const RoomRouter = require("./routes/Room");
@@ -51,6 +54,49 @@ const dateFormat = (dateToFormat) => {
   return newDate;
 }
 
+
+const getDatesDb = async (status = 0) => {
+  let datesDb = [];
+  let dates = [];
+  let date = moment();
+  do{ 
+
+    dates = [];
+    datesDb = [];
+
+    for (let i = 1; i <= 7; i++){
+      let newDate = date.day(i);
+      dates.push(newDate.format('YYYY-MM-DD'));
+    }
+
+    const result = await connection.query(
+      `SELECT date FROM plannings WHERE date BETWEEN '${dates[0]}' AND '${dates[6]}' AND status = ${status}`, 
+    { 
+      type: QueryTypes.SELECT,
+    }
+    );
+
+
+    for (let i in result){ 
+      datesDb.push(result[i].date);
+    }
+
+    date.add(1,'days');
+    dates = dates.filter(d => d > moment().format("YYYY-MM-DD"));
+    dates = dates.filter(d => !datesDb.includes(d));
+    
+  }while(dates.length == 0);
+
+  return dates;
+}
+
+// const dateFormat2 = (dateToFormat) => {
+
+//   let dateSplited = dateToFormat.split('/');
+//   let newDate = dateSplited[2] + "-" + dateSplited[0] + "-" +dateSplited[1]; 
+//   return newDate;
+// }
+
 const ValidDate = (day) => {
   var bitsDays = day.split('/');
   var yDays = bitsDays[2], 
@@ -71,6 +117,8 @@ const saveSession = (id,session) =>{
 const getSessions = () => {
   return [...sessions.values()];
 }
+
+let type = 0
 
 io.use(async(socket, next) => {
   if (socket.handshake.auth && socket.handshake.auth.token){
@@ -111,7 +159,7 @@ io.on('connection', function(socket) {
     }); 
 
 
-    socket.on('chatbot', ({client,step,message}) => {
+    socket.on('chatbot', async ({client,step,message}) => {
 
       if (step == 0){
         chatbotTyping(client,`Bonjour ${socket.email} ! 1/ Entretien 2/ Informations 3/ Contact 4/ Fin.`,'chatbot',1);
@@ -120,7 +168,11 @@ io.on('connection', function(socket) {
       if (step == 1){
         switch(message){
           case '1':
+            type = 0;
             chatbotTyping(client,"Année ?",'chatbot',4);
+            break;
+          case '2':
+            chatbotTyping(client,"Type d'usage ? 1/ Usage routier 2/ Usage tout-terrain 3/ Usage sportif.",'chatbot',2);
             break;
           case '3':
             chatbotTyping(client,`Qu'avez-vous besoin ? 1/ Email 2/ Numéro de téléphone.`,'chatbot',3);
@@ -130,6 +182,31 @@ io.on('connection', function(socket) {
             break;
           default:
             chatbotTyping(client,`Bonjour ${socket.email} ! 1/ Entretien 2/ Informations 3/ Contact 4/ Fin.`,'chatbot',1);
+        }
+      }
+
+      if (step == 2){
+        switch(message){
+          case '1':
+            type = 1;
+            getDatesDb(type).then( (res) => {
+              chatbotTyping(client,`Choisissez une date pour un essai routier : ${res.join(" | ")} `,'chatbot',44);
+            })
+            break;
+          case '2':
+            type = 2;
+            getDatesDb(type).then( (res) => {
+              chatbotTyping(client,`Choisissez une date pour un essai tout-terrain : ${res.join(" | ")} `,'chatbot',44);
+            })
+            break;
+          case '3':
+            type = 3;
+            getDatesDb(type).then( (res) => {
+              chatbotTyping(client,`Choisissez une date pour un essai sportif : ${res.join(" | ")} `,'chatbot',44);
+            })
+            break;
+          default:
+            chatbotTyping(client,"Type d'usage ? 1/ Usage routier 2/ Usage tout-terrain 3/ Usage sportif.",'chatbot',2);
         }
       }
 
@@ -165,14 +242,14 @@ io.on('connection', function(socket) {
           chatbotTyping(client,"Date de dernier entretien du véhicule ? (DD/MM/YYYY)",'chatbot',41);
         }
         else{
-          // socket.lastyear = message;
           let newDate = new Date(dateFormat(message));
           if (newDate.setMonth(newDate.getMonth()+12) < new Date() ){
             chatbotTyping(client,"Nombre de KM parcourus depuis le dernier entretien ?",'chatbot',42);
           }else{
 
-
-            // DISPO
+            getDatesDb().then( (res) => {
+              chatbotTyping(client,`Choisissez une date : ${res.join(" | ")} `,'chatbot',44);
+            })
 
           }
         }
@@ -183,7 +260,9 @@ io.on('connection', function(socket) {
           chatbotTyping(client,"Erreur ! Nombre de KM parcourus depuis le dernier entretien ?",'chatbot',42);
         }else{
           if (message >= 10000 ){
-
+            getDatesDb().then( (res) => {
+              chatbotTyping(client,`Choisissez une date : ${res.join(" | ")} `,'chatbot',44);
+            })
           }else{
             chatbotTyping(client,"Souhaitez-vous réviser votre véhicule ? 1/ Oui 2/ Non.",'chatbot',43);
           }
@@ -193,6 +272,9 @@ io.on('connection', function(socket) {
       if (step == 43){
         switch(message){
           case '1':
+            getDatesDb().then( (res) => {
+              chatbotTyping(client,`Choisissez une date : ${res.join(" | ")} `,'chatbot',44);
+            })
             break;
           case "2":
             chatbotTyping(client,'Merci et à très bientôt !','chatbot',-1);
@@ -204,7 +286,26 @@ io.on('connection', function(socket) {
       }
 
 
-      
+      if (step == 44){
+        getDatesDb(type).then( async (res) => {
+          if (res.includes(message)){
+            const result = await connection.query(
+              `SELECT id FROM plannings WHERE date = '${message}' AND status = ${type}`, { type: QueryTypes.SELECT,});
+  
+            if (result.length == 0){
+              const planning = await Planning.create({ date: message, status: type, userId:socket.user_id });
+              chatbotTyping(client,`Votre date s'est bien enregistrée !`,'chatbot',-1);
+              chatbotTyping(client,`1/ Entretien 2/ Informations 3/ Contact 4/ Fin.`,'chatbot',1);
+            }else{
+              chatbotTyping(client,`Choisissez une date parmis les dates suivantes : ${res.join(" | ")} `,'chatbot',44);
+            }
+
+          }else{
+            chatbotTyping(client,`Choisissez une date parmis les dates suivantes : ${res.join(" | ")} `,'chatbot',44);
+          }
+        })
+      }
+
     })
 
     socket.on('room updated',(room)=>{

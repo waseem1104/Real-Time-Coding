@@ -9,7 +9,6 @@ import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useSocket } from '../../../context/SocketContext';
-
 export default function Chatbot(){
 
     const socket = useSocket();
@@ -33,6 +32,10 @@ export default function Chatbot(){
             socket.emit('chatbot',({client: 1, step: 1, message : message}));
         }
 
+        if (step == 2){
+            socket.emit('chatbot',({client: 1, step: 2, message : message}));
+        }
+
         if (step == 3){
             socket.emit('chatbot',({client: 1, step: 3, message : message}));
         }
@@ -52,6 +55,10 @@ export default function Chatbot(){
 
         if (step == 43){
             socket.emit('chatbot',({client: 1, step: 43, message : message}));
+        }
+
+        if (step == 44){
+            socket.emit('chatbot',({client: 1, step: 44, message : message}));
         }
 
         if (step == -1){
