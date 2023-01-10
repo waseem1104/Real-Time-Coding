@@ -65,6 +65,8 @@ export default function Chatbot(){
             socket.emit('chatbot',({client: 1, step: 0, message : null}));
         }
 
+        setMessage("");
+
     },[step,message,messages])
 
     useEffect( () => {
