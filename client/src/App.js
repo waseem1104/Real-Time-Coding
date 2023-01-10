@@ -8,6 +8,7 @@ import ChatRoom from "./component/front/room/ChatRoom";
 import Chat from "./component/front/chat/Chat";
 import { SocketProvider } from './context/SocketContext'
 import './App.css'
+import Chatbot from "./component/front/chatbot/Chatbot";
 import Edit from "./component/admin/room/Edit";
 function App() {
 
@@ -22,6 +23,11 @@ function App() {
                     </SocketProvider>
                 }/>
 
+                <Route path="/chatbot" element={
+                    <SocketProvider>
+                        <Chatbot/>
+                    </SocketProvider>
+                }/>
                 <Route path="/admin/room/edit/:id" element={
                     <SocketProvider>
                         <Edit/>

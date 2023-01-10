@@ -5,7 +5,6 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import {Link, useNavigate} from "react-router-dom";
-
 export default function Menu(){
     return(
         <Fragment>
@@ -18,6 +17,12 @@ export default function Menu(){
                             <Link to={'/login'} className={"nav-link"}>Inscription</Link>
                             <Link to={'/chat'} className={"nav-link"}>Chat</Link>
                             <Link to={'/rooms'} className={"nav-link"}>Salons</Link>
+                        </Nav>
+
+                        <Nav className="">
+                            <Link to={'/chatbot'} className={"nav-link"}>
+                                Chatbot
+                            </Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
