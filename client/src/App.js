@@ -41,9 +41,11 @@ function App() {
 
                     
                     <Route path="/rooms" element={
-                        <SocketProvider>
-                            <ListRooms/>
-                        </SocketProvider>
+                        <RequireAuth>
+                            <SocketProvider>
+                                <ListRooms/>
+                            </SocketProvider>
+                        </RequireAuth>
                     }/>
 
                     <Route path="/login" element={

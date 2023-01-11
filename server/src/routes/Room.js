@@ -89,7 +89,7 @@ router.post("/message/new", async (req, res) => {
   try {
       const result = await RoomMessage.create({
           content: content,
-          userid: 1,
+          userid: req.user.dataValues.id,
           roomid: roomid
       });
 
@@ -111,7 +111,7 @@ router.post("/join", async (req, res) => {
 
   try {
       const result = await RoomUser.create({
-          userid: 1,
+          userid: req.user.dataValues.id,
           roomid: roomid
       });
 
@@ -132,7 +132,7 @@ router.delete("/leave/:id", async (req, res) => {
     const nbLines = await RoomUser.destroy({
       where: {
         roomid: parseInt(req.params.id, 10),
-        userid: 1
+        userid: req.user.dataValues.id
       },
     });
     if (!nbLines) {

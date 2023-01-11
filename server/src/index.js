@@ -35,7 +35,7 @@ app.use(cors(corsOption));
 
 app.use(SecurityRouter);
 app.use("/admin", AdminRouter);
-app.use("/room", RoomRouter);
+app.use("/room", checkAuthentication,RoomRouter);
 app.use("/user",checkAuthentication,UserRouter);
 
 app.get("/", (req, res, next) => {

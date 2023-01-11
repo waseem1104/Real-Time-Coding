@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Menu from "../Menu";
 import ChatRoom from "./ChatRoom";
+import Cookies from 'universal-cookie';
 import { useSocket } from '../../../context/SocketContext';
 
 export default function ListRooms(){
@@ -15,10 +16,10 @@ export default function ListRooms(){
     const [countRooms,setCountRooms] = useState([]);
     const [roomSelected, setRoomSelected] = useState([]);
     const socket = useSocket();
+    const cookies = new Cookies();
 
     useEffect( () => {
 
-        console.log('test');
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (request.readyState == XMLHttpRequest.DONE) {
@@ -26,7 +27,7 @@ export default function ListRooms(){
             }
         }
         request.open( "GET", 'http://localhost:5000/room/', false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
         request.onreadystatechange = function() {
@@ -35,7 +36,7 @@ export default function ListRooms(){
             }
         }
         request.open( "GET", 'http://localhost:5000/room/count', false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
     },[]);
 
@@ -103,7 +104,7 @@ export default function ListRooms(){
             }
         }
         request.open( "GET", `http://localhost:5000/room/${room.id}/count`, false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
     });
@@ -146,20 +147,6 @@ export default function ListRooms(){
                             <ChatRoom socket={socket} roomSelected={roomSelected}  />
                         }
                     </Col>
-                    {/* <Col md="2">
-                        <ListGroup>
-
-                            { 
-                                rooms.map((room,index) => {
-                                    return (
-                                        <ListGroup.Item className="room" key={room.id} id={room.id} onClick={ () => handleSelected(room)}> 
-                                            { room.name }
-                                        </ListGroup.Item>
-                                    );
-                                })
-                            }
-                        </ListGroup>
-                    </Col> */}
                 </Row>
                 
             </Container>
