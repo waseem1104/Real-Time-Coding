@@ -12,6 +12,8 @@ const moment = require('moment');
 const SecurityRouter = require("./routes/Security");
 const AdminRouter = require("./routes/Admin");
 const RoomRouter = require("./routes/Room");
+const UserRouter = require("./routes/User");
+const checkAuthentication = require("./middlewares/checkAuthentication");
 
 const corsOption = {
     origin: ['http://localhost:3000'],
@@ -34,6 +36,7 @@ app.use(cors(corsOption));
 app.use(SecurityRouter);
 app.use("/admin", AdminRouter);
 app.use("/room", RoomRouter);
+app.use("/user",checkAuthentication,UserRouter);
 
 app.get("/", (req, res, next) => {
     res.send("Hello world!");

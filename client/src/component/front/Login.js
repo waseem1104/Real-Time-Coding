@@ -4,49 +4,47 @@ import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 import {Link, useNavigate} from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { useSocket } from '../../context/SocketContext';
+import { useAuth } from '../../context/AuthContext';
 export default function Login() {
 
+    const auth = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isConnected, setIsConnected] = useState(false);
-    // const socket = useSocket();
-    // useEffect( () => {
-    //     socket.on('users', (users) =>{
-    //         console.log(users)
-    //     })
-    // },[socket])
+    const [alert, setAlert] = useState(false);
+    
+
+    const request = new XMLHttpRequest();
 
     const login = useCallback(
         () => {
-            const data = {email: email, password: password};
 
-            fetch('http://localhost:5000/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Success:', data);
-                    const cookies = new Cookies();
-                    cookies.set('token', data.token, {
-                        path: '/',
-                        maxAge: 60 * 60 * 24 * 7,
-                    });
+            request.open("POST", 'http://localhost:5000/login', false);
+            request.setRequestHeader("Content-type", "application/json");
+            request.send(JSON.stringify({
+                "email": email,
+                "password": password,
+            }));
 
-                    navigate("/rooms", { replace: false });
+            if (request.response !== 'OK') {
+                if (JSON.parse(request.response).success === false) {
+                    setAlert(true);
+                    return;
+                }
+            }
 
-                    
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+            const cookies = new Cookies();
+            cookies.set('token', JSON.parse(request.response).token, {
+                path: '/',
+                maxAge: 60 * 60 * 24 * 7,
+            });
+
+            auth.login(JSON.parse(request.response));
+            navigate("/rooms", { replace: false });
         },
         [email, password]
     );
@@ -57,6 +55,12 @@ export default function Login() {
             <Container>
                 <Row>
                     <Col>
+
+                        {alert ?
+                            <Alert key="danger" variant="danger" className="mt-3">
+                                Mauvais email ou mot de passe
+                            </Alert> : ''
+                        }
                         <div className={"d-flex justify-content-center mt-5"}>
                             <Card style={{width: '25rem'}}>
                                 <Card.Body>

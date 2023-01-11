@@ -7,6 +7,8 @@ import ListRooms from "./component/front/room/ListRooms";
 import ChatRoom from "./component/front/room/ChatRoom";
 import Chat from "./component/front/chat/Chat";
 import { SocketProvider } from './context/SocketContext'
+import { AuthProvider } from './context/AuthContext';
+import { RequireAuth } from './component/RequireAuth';
 import './App.css'
 import Chatbot from "./component/front/chatbot/Chatbot";
 import Edit from "./component/admin/room/Edit";
@@ -14,49 +16,47 @@ function App() {
 
     return (
         <>
-            <Routes>
-                <Route path="/" element={<Home/>}/>
-                <Route path="/admin" element={<Admin/>}/>
-                <Route path="/admin/room/new" element={
-                    <SocketProvider>
-                        <CreateRoom/>
-                    </SocketProvider>
-                }/>
+            <AuthProvider>
+                <Routes>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/admin" element={<Admin/>}/>
+                    <Route path="/admin/room/new" element={
+                        <SocketProvider>
+                            <CreateRoom/>
+                        </SocketProvider>
+                    }/>
 
-                <Route path="/chatbot" element={
-                    <SocketProvider>
-                        <Chatbot/>
-                    </SocketProvider>
-                }/>
-                <Route path="/admin/room/edit/:id" element={
-                    <SocketProvider>
-                        <Edit/>
-                    </SocketProvider>
-                }/>
+                    <Route path="/chatbot" element={
+                        <RequireAuth>
+                            <SocketProvider>
+                                <Chatbot/>
+                            </SocketProvider>
+                        </RequireAuth>
+                    }/>
+                    <Route path="/admin/room/edit/:id" element={
+                        <SocketProvider>
+                            <Edit/>
+                        </SocketProvider>
+                    }/>
 
-                
-                <Route path="/rooms" element={
-                    <SocketProvider>
-                        <ListRooms/>
-                    </SocketProvider>
-                }/>
+                    
+                    <Route path="/rooms" element={
+                        <SocketProvider>
+                            <ListRooms/>
+                        </SocketProvider>
+                    }/>
 
-                {/* <Route path="/room/:id" element={
-                    <SocketProvider>
-                        <ChatRoom/>
-                    </SocketProvider>
-                }/> */}
+                    <Route path="/login" element={
+                        <Login/>
+                    }/>
 
-                <Route path="/login" element={
-                    <Login/>
-                }/>
-
-                <Route path="/chat" element={
-                    <SocketProvider>
-                        <Chat/>   
-                    </SocketProvider>    
-                }/>
-            </Routes>
+                    <Route path="/chat" element={
+                        <SocketProvider>
+                            <Chat/>   
+                        </SocketProvider>    
+                    }/>
+                </Routes>
+            </AuthProvider>
         </>
     )
 
