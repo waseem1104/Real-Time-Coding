@@ -9,12 +9,29 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
+import Cookies from 'universal-cookie';
 import { useSocket } from '../../../context/SocketContext';
 
 export default function Chat(){
 
     const socket = useSocket();
     const [users,setUsers] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const cookies = new Cookies();
+
+    useEffect ( () => {
+
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+                setMessages(JSON.parse(request.responseText));
+            }
+        }
+        request.open( "GET", 'http://localhost:5000/chat/', false );
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.send();
+        
+    },[])
 
     useEffect( () => {
         socket.on('user disconnected',({userId, email, connected}) => {
@@ -83,7 +100,18 @@ export default function Chat(){
 
                         <Card style={{height: '30rem'}}>
                             <Card.Body>
-                    
+                            {
+                                messages.map( (message,i) =>{
+                                    return(
+                                        <div className="message mb-2" key={i}>
+                                            <div className="content px-2">
+                                                {message.content}
+                                                <p className="m-0">{message.createdAt}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            }
                             </Card.Body>
                             <Card.Footer>
                             <InputGroup>
