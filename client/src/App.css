@@ -39,6 +39,12 @@
     padding: 5px 10px 5px 10px;
 }
 
+#chat .message .content-chat {
+    background-color: black;
+    color:white;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+}
 
 #chatbot-body{
     overflow: auto;
