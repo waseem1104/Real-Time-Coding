@@ -5,16 +5,16 @@ import Container from "react-bootstrap/Container";
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
 import { useSocket } from '../../../context/SocketContext';
+
 export default function Chat(){
 
     const socket = useSocket();
     const [users,setUsers] = useState([]);
-    const [userSelected,setUserSelected] = useState([]);
-
-    const handleSelected = useCallback( (user) =>{
-        setUserSelected(user)
-    });
 
     useEffect( () => {
         socket.on('user disconnected',({userId, email, connected}) => {
@@ -57,7 +57,7 @@ export default function Chat(){
                             { 
                                 users.map((user,index) => {
                                     return (
-                                        <ListGroup.Item className="user" key={index} onClick={ () => handleSelected(user)}> 
+                                        <ListGroup.Item className="user" key={index}> 
                                             { user.email }
                                             { user.connected ? 
                                                 <div className="d-flex">
@@ -78,8 +78,22 @@ export default function Chat(){
                         </div>
                     </Col>
                     <Col md="9">
-                        <h2 className="fs-5 mb-3">{userSelected.email}</h2>
+                        <h2 className="fs-5 mb-3">#Général</h2>
                         <hr/>
+
+                        <Card style={{height: '30rem'}}>
+                            <Card.Body>
+                    
+                            </Card.Body>
+                            <Card.Footer>
+                            <InputGroup>
+                                <Form.Control
+                                placeholder="Message..."
+                                />
+                                <Button variant="dark">Envoyer</Button>
+                            </InputGroup>
+                            </Card.Footer>
+                        </Card>
                     </Col>
                 </Row>
             </Container>
