@@ -7,9 +7,10 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useSocket } from '../../../context/SocketContext';
 import List from "./List";
+import Cookies from 'universal-cookie';
 export default function CreateRoom(){
 
-
+    const cookies = new Cookies();
     const [name, setName] = useState('');
     const [size,setSize] = useState(1);
 
@@ -24,6 +25,7 @@ export default function CreateRoom(){
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + cookies.get("token")
                 },
                 body: JSON.stringify(data),
             })

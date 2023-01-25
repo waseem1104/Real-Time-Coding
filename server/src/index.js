@@ -14,6 +14,7 @@ const AdminRouter = require("./routes/Admin");
 const RoomRouter = require("./routes/Room");
 const UserRouter = require("./routes/User");
 const checkAuthentication = require("./middlewares/checkAuthentication");
+const checkIsAdmin = require("./middlewares/checkIsAdmin");
 
 const corsOption = {
     origin: ['http://localhost:3000'],
@@ -34,7 +35,7 @@ app.use(express.json());
 app.use(cors(corsOption));
 
 app.use(SecurityRouter);
-app.use("/admin", AdminRouter);
+app.use("/admin",checkIsAdmin,AdminRouter);
 app.use("/room", checkAuthentication,RoomRouter);
 app.use("/user",checkAuthentication,UserRouter);
 

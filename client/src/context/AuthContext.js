@@ -3,11 +3,10 @@ import Cookies from 'universal-cookie';
 
 const AuthContext = createContext(null);
 const request = new XMLHttpRequest();
-
 export const AuthProvider = ({ children }) => {
 
-    const [user, setUser] = useState(null);
     const cookies = new Cookies();
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
 
@@ -34,7 +33,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         setUser({success:false});
-        cookies.remove('token');
+        cookies.remove('token', { path: '/' });
     }
 
     return (
