@@ -8,11 +8,13 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Cookies from 'universal-cookie';
 
 export default function ChatRoom({socket,roomSelected}){
 
     const [messages,setMessages] = useState([]);
     const [message,setMessage] = useState('');
+    const cookies = new Cookies();
 
     useEffect( () => {
         socket.on('message room',({client,email,content}) => {
@@ -27,7 +29,6 @@ export default function ChatRoom({socket,roomSelected}){
 
     useEffect( () => {
 
-
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (request.readyState == XMLHttpRequest.DONE) {
@@ -35,7 +36,7 @@ export default function ChatRoom({socket,roomSelected}){
             }
         }
         request.open( "GET", `http://localhost:5000/room/${roomSelected.id}/messages`, false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
         request.onreadystatechange = function() {
@@ -44,7 +45,7 @@ export default function ChatRoom({socket,roomSelected}){
         }
         request.open( "POST", `http://localhost:5000/room/join`, false );
         request.setRequestHeader("Content-type", "application/json");
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send(JSON.stringify({
             "roomid" : roomSelected.id
         }));
@@ -55,7 +56,7 @@ export default function ChatRoom({socket,roomSelected}){
 
             request.open( "DELETE", `http://localhost:5000/room/leave/${roomSelected.id}`, false ); 
             request.setRequestHeader("Content-type", "application/json");
-            // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+            request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
             request.send();
             socket.emit('quit',roomSelected.id);
         }
@@ -76,7 +77,7 @@ export default function ChatRoom({socket,roomSelected}){
         }
         request.open( "POST", `http://localhost:5000/room/message/new`, false );
         request.setRequestHeader("Content-type", "application/json");
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send(JSON.stringify({
             "roomid": roomSelected.id,
             "content": message

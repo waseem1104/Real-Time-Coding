@@ -12,6 +12,9 @@ const moment = require('moment');
 const SecurityRouter = require("./routes/Security");
 const AdminRouter = require("./routes/Admin");
 const RoomRouter = require("./routes/Room");
+const UserRouter = require("./routes/User");
+const checkAuthentication = require("./middlewares/checkAuthentication");
+const checkIsAdmin = require("./middlewares/checkIsAdmin");
 
 const corsOption = {
     origin: ['http://localhost:3000'],
@@ -32,8 +35,9 @@ app.use(express.json());
 app.use(cors(corsOption));
 
 app.use(SecurityRouter);
-app.use("/admin", AdminRouter);
-app.use("/room", RoomRouter);
+app.use("/admin",checkIsAdmin,AdminRouter);
+app.use("/room", checkAuthentication,RoomRouter);
+app.use("/user",checkAuthentication,UserRouter);
 
 app.get("/", (req, res, next) => {
     res.send("Hello world!");

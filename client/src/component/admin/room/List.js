@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 export default function List({socket}){
 
     const [rooms, setRooms] = useState([]);
-    // const cookies = new Cookies();
+    const cookies = new Cookies();
 
     useEffect ( () => {
         const request = new XMLHttpRequest();
@@ -16,7 +16,7 @@ export default function List({socket}){
             }
         }
         request.open( "GET", 'http://localhost:5000/room/', false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
     },[]);
