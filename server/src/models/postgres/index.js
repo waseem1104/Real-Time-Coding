@@ -4,6 +4,7 @@ exports.Room = require("./Room");
 exports.RoomMessage = require("./RoomMessage");
 exports.RoomUser = require("./RoomUser");
 exports.Planning = require("./Planning");
+exports.Chat = require("./Chat");
 
 
 // ROOM MESSAGE //
@@ -19,4 +20,7 @@ exports.RoomUser.belongsTo(exports.Room, {through: exports.RoomUser, foreignKey:
 
 exports.User.hasMany(exports.Planning);
 exports.Planning.belongsTo(exports.User);
+
+// CHAT PUBLIC
+exports.Chat.belongsTo(exports.User, {through: exports.Chat, foreignKey: "from" });
 
