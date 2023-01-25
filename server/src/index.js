@@ -13,6 +13,7 @@ const SecurityRouter = require("./routes/Security");
 const AdminRouter = require("./routes/Admin");
 const RoomRouter = require("./routes/Room");
 const UserRouter = require("./routes/User");
+const ChatRouter = require("./routes/Chat");
 const checkAuthentication = require("./middlewares/checkAuthentication");
 const checkIsAdmin = require("./middlewares/checkIsAdmin");
 
@@ -38,6 +39,7 @@ app.use(SecurityRouter);
 app.use("/admin",checkIsAdmin,AdminRouter);
 app.use("/room", checkAuthentication,RoomRouter);
 app.use("/user",checkAuthentication,UserRouter);
+app.use("/chat", checkAuthentication, ChatRouter);
 
 app.get("/", (req, res, next) => {
     res.send("Hello world!");
@@ -162,6 +164,14 @@ io.on('connection', function(socket) {
       io.sockets.emit("get room",room);
     }); 
 
+    socket.on('public message', ({content,dateCreated}) =>{
+      io.sockets.emit('public message', 
+      {
+        content : content,
+        email : socket.email,
+        createdAt : dateCreated
+      })
+    })
 
     socket.on('chatbot', async ({client,step,message}) => {
 
