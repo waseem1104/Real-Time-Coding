@@ -1,11 +1,20 @@
 const { Router } = require("express");
-const { Chat } = require("../models/postgres");
+const { Chat, User } = require("../models/postgres");
+const connection = require("../models/postgres/db");
+const { ValidationError, Op, QueryTypes } = require("sequelize");
 
 const router = new Router();
 
 router.get("/", async (req, res) => {
     try {
-      const result = await Chat.findAll();
+      const result = await Chat.findAll({
+        include: [
+          {
+            model: User,
+            attributes: ["email"],
+          },
+        ],
+      });
       res.json(result);
     } catch (error) {
       res.sendStatus(500);

@@ -37,7 +37,7 @@ export default function Chat(){
     useEffect ( () => {
         socket.on('public message', ({content,email,createdAt}) =>{
             let new_messages = messages.slice();
-            new_messages.push({content,email,createdAt});
+            new_messages.push({content,user:{email},createdAt});
             setMessages(new_messages);
         })
     },[socket,messages])
@@ -130,6 +130,7 @@ export default function Chat(){
                                 messages.map( (message,i) =>{
                                     return(
                                         <div className="message mb-2" key={i}>
+                                            <p className="m-0">{message.user.email}</p>
                                             <div className="content px-2">
                                                 {message.content}
                                                 <p className="m-0">{message.createdAt}</p>
