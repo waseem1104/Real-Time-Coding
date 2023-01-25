@@ -13,4 +13,21 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.post("/new", async (req, res) => {
+    const content = req.body.content.trim();
+
+    try {
+        const result = await Chat.create({
+            content: content,
+            from: req.user.dataValues.id
+        });
+        res.status(201).json(result);
+    } catch (error) {
+
+        res.sendStatus(500);
+        console.error(error);
+        
+    }
+});
+
 module.exports = router;
