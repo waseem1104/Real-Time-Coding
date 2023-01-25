@@ -17,6 +17,7 @@ export default function Chat(){
     const socket = useSocket();
     const [users,setUsers] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [message,setMessage] = useState('');
     const cookies = new Cookies();
 
     useEffect ( () => {
@@ -32,6 +33,23 @@ export default function Chat(){
         request.send();
         
     },[])
+
+    const handleSubmit = useCallback ( () => {
+
+        const request = new XMLHttpRequest();
+
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+            }
+        }
+        request.open( "POST", `http://localhost:5000/chat/new`, false );
+        request.setRequestHeader("Content-type", "application/json");
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.send(JSON.stringify({
+            "content" : message
+        }));
+
+    },[message])
 
     useEffect( () => {
         socket.on('user disconnected',({userId, email, connected}) => {
@@ -117,8 +135,10 @@ export default function Chat(){
                             <InputGroup>
                                 <Form.Control
                                 placeholder="Message..."
+                                value={message}
+                                onChange={ (e) => setMessage(e.target.value)}
                                 />
-                                <Button variant="dark">Envoyer</Button>
+                                <Button onClick={ () => handleSubmit()} variant="dark">Envoyer</Button>
                             </InputGroup>
                             </Card.Footer>
                         </Card>
