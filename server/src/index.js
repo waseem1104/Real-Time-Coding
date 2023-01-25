@@ -164,6 +164,14 @@ io.on('connection', function(socket) {
       io.sockets.emit("get room",room);
     }); 
 
+    socket.on('public message', ({content,dateCreated}) =>{
+      io.sockets.emit('public message', 
+      {
+        content : content,
+        email : socket.email,
+        createdAt : dateCreated
+      })
+    })
 
     socket.on('chatbot', async ({client,step,message}) => {
 

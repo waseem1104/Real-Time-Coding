@@ -34,12 +34,21 @@ export default function Chat(){
         
     },[])
 
+    useEffect ( () => {
+        socket.on('public message', ({content,email,createdAt}) =>{
+            let new_messages = messages.slice();
+            new_messages.push({content,email,createdAt});
+            setMessages(new_messages);
+        })
+    },[socket,messages])
+
     const handleSubmit = useCallback ( () => {
 
         const request = new XMLHttpRequest();
 
         request.onreadystatechange = function() {
             if (request.readyState == XMLHttpRequest.DONE) {
+                socket.emit('public message',{content:JSON.parse(request.responseText).content, dateCreated:JSON.parse(request.responseText).createdAt});
             }
         }
         request.open( "POST", `http://localhost:5000/chat/new`, false );
@@ -48,7 +57,6 @@ export default function Chat(){
         request.send(JSON.stringify({
             "content" : message
         }));
-
     },[message])
 
     useEffect( () => {
