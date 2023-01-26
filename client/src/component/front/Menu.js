@@ -47,7 +47,7 @@ export default function Menu(){
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Link to={'/login'} className={"nav-link"}>Connexion</Link>
-                        <Link to={'/login'} className={"nav-link"}>Inscription</Link>
+                        <Link to={'/register'} className={"nav-link"}>Inscription</Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
