@@ -9,56 +9,76 @@ import {Link, useNavigate} from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { useSocket } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
+
 export default function Register() {
 
-    const auth = useAuth();
-    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [alert, setAlert] = useState(false);
-    
+    const [alertShow, setAlertShow] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSave, setAlertSave] = useState(false);
 
     const request = new XMLHttpRequest();
 
-    const register = useCallback(
+    const save = useCallback(
         () => {
+            if (password === confirmPassword) {
+                request.open("POST", 'http://localhost:5000/register', false);
+                request.setRequestHeader('Accept', 'application/json');
+                request.setRequestHeader("Content-type", "application/json");
+                request.send(JSON.stringify({
+                    email: email,
+                    password: password,
+                   
+                }));
 
-            request.open("POST", 'http://localhost:5000/register', false);
-            request.setRequestHeader("Content-type", "application/json");
-            request.send(JSON.stringify({
-                "email": email,
-                "password": password,
-            }));
-
-            if (request.response !== 'OK') {
-                if (JSON.parse(request.response).success === false) {
-                    setAlert(true);
-                    return;
+                if (JSON.parse(request.response).id) {
+                    setAlertSave(true);
+                    setAlert(false);
+                    setAlertShow(false);
+                    setEmail('');
+                    setPassword('');
+                    setConfirmPassword('');
+                   
+                }else if (JSON.parse(request.response).email) {
+                    setAlert(false);
+                    setAlertSave(false);
+                    setAlertMessage('Email déjà utilisé');
+                    setAlertShow(true);
+                } else if (JSON.parse(request.response).password) {
+                    setAlert(false);
+                    setAlertSave(false);
+                    setAlertMessage('Le mot de passe doit contenir au moins 6 caractères');
+                    setAlertShow(true);
                 }
+            
+            }else {
+                setAlert(true);
             }
-
-            const cookies = new Cookies();
-            cookies.set('token', JSON.parse(request.response).token, {
-                path: '/',
-                maxAge: 60 * 60 * 24 * 7,
-            });
-
-            auth.register(JSON.parse(request.response));
-            navigate("/rooms", { replace: false });
         },
-        [email, password]
+        [email, password, confirmPassword,alert]
     );
-
 
     return (
         <Fragment>
             <Container>
                 <Row>
                     <Col>
-
                         {alert ?
                             <Alert key="danger" variant="danger" className="mt-3">
-                                Mauvais email ou mot de passe
+                                Les mots de passe ne correspondent pas
+                            </Alert> : ''
+                        }
+                        {alertShow ?
+                            <Alert key="danger" variant="danger" className="mt-3">
+                                {alertMessage}
+                            </Alert> : ''
+                        }
+                        {alertSave ?
+                            <Alert key="success" variant="success" className="mt-3">
+                                Votre compte a été créé avec succès.
                             </Alert> : ''
                         }
                         <div className={"d-flex justify-content-center mt-5"}>
@@ -96,9 +116,9 @@ export default function Register() {
                                     <div className="input-group mb-3">
                                         <input
                                             type="password"
-                                            value={password}
+                                            value={confirmPassword}
                                             onChange={(e) => {
-                                                setPassword(e.target.value)
+                                                setConfirmPassword(e.target.value)
                                             }}
                                             className="form-control"
                                             placeholder="Confirmez votre mot de passe"
@@ -108,7 +128,7 @@ export default function Register() {
                                     </div>
 
                                     <div className="d-flex justify-content-center align-items-center">
-                                        <Button variant="primary" onClick={register}>S'inscrire</Button>
+                                        <Button variant="primary" onClick={save}>S'inscrire</Button>
                                     </div>
                                 </Card.Body>
                             </Card>
