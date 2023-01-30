@@ -60,7 +60,7 @@ router.post("/register", async (req, res) => {
     const result = await User.create({
       email: email,
       password: req.body.password,
-      isAdmin: false,
+      isAdmin: req.body.isAdmin,
       status: 1,
     });
 

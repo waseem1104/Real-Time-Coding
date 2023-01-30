@@ -9,6 +9,7 @@ import {Link, useNavigate} from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { useSocket } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
+import Form from 'react-bootstrap/Form';
 
 export default function Register() {
 
@@ -19,11 +20,16 @@ export default function Register() {
     const [alertShow, setAlertShow] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSave, setAlertSave] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(0);
 
     const request = new XMLHttpRequest();
 
     const save = useCallback(
         () => {
+            let admin = false
+            if(isAdmin == 1){
+                admin = true
+            }
             if (password === confirmPassword) {
                 request.open("POST", 'http://localhost:5000/register', false);
                 request.setRequestHeader('Accept', 'application/json');
@@ -31,6 +37,7 @@ export default function Register() {
                 request.send(JSON.stringify({
                     email: email,
                     password: password,
+                    isAdmin: admin,
                    
                 }));
 
@@ -58,7 +65,7 @@ export default function Register() {
                 setAlert(true);
             }
         },
-        [email, password, confirmPassword,alert]
+        [email, password, confirmPassword,alert, isAdmin]
     );
 
     return (
@@ -126,7 +133,10 @@ export default function Register() {
                                             aria-describedby="basic-addon1"
                                         />
                                     </div>
-
+                                    <Form.Select value={isAdmin} onChange={(e) => setIsAdmin(e.target.value)}>
+                                        <option value="0">Utilisateur</option>
+                                        <option value="1">Conseiller</option>
+                                    </Form.Select>
                                     <div className="d-flex justify-content-center align-items-center">
                                         <Button variant="primary" onClick={save}>S'inscrire</Button>
                                     </div>
