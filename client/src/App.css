@@ -23,3 +23,29 @@
     font-size: 14px;
     color: rgba(0,0,0,.55);
 }
+
+
+#chatbot .message .content-chatbot span {
+    background-color: black;
+    color:white;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+}
+
+#chatbot .message .content-client span {
+    background-color: red;
+    color:white;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+}
+
+#chat .message .content-chat {
+    background-color: black;
+    color:white;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+}
+
+#chatbot-body{
+    overflow: auto;
+}

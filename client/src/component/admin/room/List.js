@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 export default function List({socket}){
 
     const [rooms, setRooms] = useState([]);
-    // const cookies = new Cookies();
+    const cookies = new Cookies();
 
     useEffect ( () => {
         const request = new XMLHttpRequest();
@@ -16,7 +16,7 @@ export default function List({socket}){
             }
         }
         request.open( "GET", 'http://localhost:5000/room/', false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
     },[]);
@@ -42,6 +42,32 @@ export default function List({socket}){
         })
     },[rooms,socket])
 
+    useEffect( () => {
+        socket.on("room deleted", (room) =>{
+            let getRooms = rooms.slice();
+            let found = getRooms.findIndex( element => element.id == room.id);
+            getRooms.splice(found,1);
+            setRooms(getRooms);
+        })
+    },[rooms])
+
+    const handleDelete = useCallback( (id) => {
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                if (request.readyState == XMLHttpRequest.DONE) {
+
+                    let getRooms = rooms.slice();
+                    let found = getRooms.findIndex( element => element.id == JSON.parse(request.responseText).id);
+                    getRooms.splice(found,1);
+                    setRooms(getRooms);
+                    socket.emit('room deleted',JSON.parse(request.responseText))
+                }
+            }
+            request.open("PATCH", `http://localhost:5000/admin/room/delete/${id}`, false );
+            request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+            request.send({id:id});
+            
+        },[rooms])
 
 
     return(
@@ -67,7 +93,7 @@ export default function List({socket}){
                                         <td>{room.createdAt}</td>
                                         <td>
                                             <Button size="sm" variant="dark" className="me-2">Modifier</Button>
-                                            <Button size="sm" variant="danger"> Supprimer</Button>
+                                            <Button onClick={ () => handleDelete(room.id)} size="sm" variant="danger">Supprimer</Button>
                                         </td>
                                     </tr>
 
