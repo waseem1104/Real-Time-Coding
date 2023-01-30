@@ -31,10 +31,10 @@ function Notification() {
                 facts.map((fact, i) =>
                     <Toast key={i}
                            onClose={() => setFacts([])}
-                           autohide
                            bg={"primary"}>
                         <Toast.Header>
                             <strong className="me-auto">Notification</strong>
+                            <small>{fact.date}</small>
                         </Toast.Header>
                         <Toast.Body>{fact.info}</Toast.Body>
                     </Toast>
