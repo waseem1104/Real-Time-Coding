@@ -14,6 +14,9 @@ import { IsAdmin } from './component/IsAdmin';
 import './App.css'
 import Chatbot from "./component/front/chatbot/Chatbot";
 import Edit from "./component/admin/room/Edit";
+import Request from "./component/front/request/Request";
+import RequestAdmin from "./component/admin/request/Request";
+
 function App() {
 
     return (
@@ -35,6 +38,14 @@ function App() {
                         <SocketProvider>
                             <Chat/>   
                         </SocketProvider>    
+                    }/>
+
+                    <Route path="/request" element={
+                        <RequireAuth>
+                            <SocketProvider>
+                                <Request/>
+                            </SocketProvider>
+                        </RequireAuth>
                     }/>
 
                     <Route path="/chatbot" element={
@@ -72,6 +83,13 @@ function App() {
                         <IsAdmin>
                             <SocketProvider>
                                 <Edit/>
+                            </SocketProvider>
+                        </IsAdmin>
+                    }/>
+                    <Route path="/admin/request" element={
+                        <IsAdmin>
+                            <SocketProvider>
+                                <RequestAdmin/>
                             </SocketProvider>
                         </IsAdmin>
                     }/>
