@@ -3,6 +3,7 @@ import { Fragment, useState, useEffect,useCallback,useMemo } from "react";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Cookies from 'universal-cookie';
+import {Link, useNavigate} from "react-router-dom";
 export default function List({socket}){
 
     const [rooms, setRooms] = useState([]);
@@ -79,7 +80,6 @@ export default function List({socket}){
                         <tr>
                             <th>Nom</th>
                             <th>Taille</th>
-                            <th>Date de création</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -89,10 +89,9 @@ export default function List({socket}){
                                 return(
                                     <tr key={room.id} id={room.id}>
                                         <td>{room.name}</td>
-                                        <td>0 / {room.size}</td>
-                                        <td>{room.createdAt}</td>
+                                        <td>{room.size}</td>
                                         <td>
-                                            <Button size="sm" variant="dark" className="me-2">Modifier</Button>
+                                            <Link to={`/admin/room/edit/${room.id}`}><Button size="sm" variant="dark" className="me-2">Modifier</Button></Link>
                                             <Button onClick={ () => handleDelete(room.id)} size="sm" variant="danger">Supprimer</Button>
                                         </td>
                                     </tr>

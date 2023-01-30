@@ -49,6 +49,7 @@ export default function Chat(){
         request.onreadystatechange = function() {
             if (request.readyState == XMLHttpRequest.DONE) {
                 socket.emit('public message',{content:JSON.parse(request.responseText).content, dateCreated:JSON.parse(request.responseText).createdAt});
+                setMessage('');
             }
         }
         request.open( "POST", `http://localhost:5000/chat/new`, false );
