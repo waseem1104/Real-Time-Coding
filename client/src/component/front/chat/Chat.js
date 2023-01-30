@@ -53,6 +53,7 @@ export default function Chat() {
                     content: JSON.parse(request.responseText).content,
                     dateCreated: JSON.parse(request.responseText).createdAt
                 });
+                setMessage('');
             }
         }
         request.open("POST", `http://localhost:5000/chat/new`, false);

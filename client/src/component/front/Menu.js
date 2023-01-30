@@ -29,6 +29,10 @@ export default function Menu(){
                         <Nav className="me-auto">
                             <Link to={'/chat'} className={"nav-link"}>Chat</Link>
                             <Link to={'/rooms'} className={"nav-link"}>Salons</Link>
+                            <Link to={'/request'} className={"nav-link"}>Demande</Link>
+                            { auth.user.isAdmin ?
+                                <Link to={'/admin/room/new'} className={"nav-link"}>Administration</Link>
+                                : ""}
                         </Nav>
 
                         <Nav className="">

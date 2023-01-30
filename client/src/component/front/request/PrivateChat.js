@@ -62,6 +62,8 @@ export default function PrivateChat({requestUser}) {
                     dateCreated: JSON.parse(request.responseText).createdAt,
                     to: JSON.parse(request.responseText).advisor
                 });
+
+                setMessage('');
             }
         }
         request.open("POST", `http://localhost:5000/message/privateMessages/new`, false);

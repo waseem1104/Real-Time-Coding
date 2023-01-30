@@ -6,7 +6,6 @@ export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
 
-    const [isConnected, setConnected] = useState(false)
     const cookies = new Cookies();
     const socket = useMemo(
         () => io("ws://localhost:5000",{
@@ -15,23 +14,6 @@ export const SocketProvider = ({ children }) => {
             }
         })
         , []);
-    // let socket = useRef(null)
-
-    // useEffect( () => {
-    //     const cookies = new Cookies();
-    //     if (!isConnected) {
-    //         socket = io("ws://localhost:5000",{
-    //             auth: {
-    //                 token: cookies.get('token')
-    //             }
-    //         })
-    //     }
-
-    //     socket.on('connect', () => {
-    //         console.info(`Successfully connected !`)
-    //         setConnected(true)
-    //     })
-    // },[])
 
     return (
         <SocketContext.Provider value={socket}>

@@ -13,9 +13,6 @@ export default function Edit(){
 
     const [name, setName] = useState('');
     const [size,setSize] = useState(1);
-    // const [count,setCount] = useState(0);
-
-
 
     const [alertSize,setAlertSize] = useState(false);
 
@@ -52,7 +49,7 @@ export default function Edit(){
         request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
-        if (size >= count){
+        if (size >= count && name.trim().length > 2 && size >= 1){
             setAlertSize(false);
             request.onreadystatechange = function() {
                 if (request.readyState == XMLHttpRequest.DONE) {
@@ -84,7 +81,8 @@ export default function Edit(){
 
                         {alertSize ?
                             <Alert key="danger" variant="danger" className="mt-3">
-                                Erreur au niveau de la taille du salon {name}. Des utilisateurs sont présents dans ce salon.
+                                Erreur au niveau de la taille du salon. Des utilisateurs sont présents dans ce salon.
+                                La taille du salon doit être supérieur à 1 et la taille du nom doit être supérieur à 2 caractères !
                             </Alert> : ''
                         }
                         <div className={"d-flex justify-content-center mt-5"}>
