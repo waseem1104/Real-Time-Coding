@@ -14,6 +14,8 @@ import { IsAdmin } from './component/IsAdmin';
 import './App.css'
 import Chatbot from "./component/front/chatbot/Chatbot";
 import Edit from "./component/admin/room/Edit";
+import RequestAdmin from "./component/admin/request/Request";
+
 function App() {
 
     return (
@@ -72,6 +74,14 @@ function App() {
                         <IsAdmin>
                             <SocketProvider>
                                 <Edit/>
+                            </SocketProvider>
+                        </IsAdmin>
+                    }/>
+
+                    <Route path="/admin/request" element={
+                        <IsAdmin>
+                            <SocketProvider>
+                                <RequestAdmin/>
                             </SocketProvider>
                         </IsAdmin>
                     }/>
