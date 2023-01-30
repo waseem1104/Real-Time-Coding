@@ -24,15 +24,12 @@ export default function Menu() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Link to={'/admin/room'} className={"nav-link"}>Salons</Link>
+                            <Link to={'/admin/room/new'} className={"nav-link"}>Salons</Link>
                             <Link to={'/admin/request'} className={"nav-link"}>Demandes</Link>
                         </Nav>
-
                         <Nav className="">
                             <Button variant="danger" onClick={logout}>Déconnexion</Button>
                         </Nav>
-
-
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

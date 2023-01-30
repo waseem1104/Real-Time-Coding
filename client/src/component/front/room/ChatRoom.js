@@ -73,6 +73,8 @@ export default function ChatRoom({socket,roomSelected}){
                     message: message,
                     room : roomSelected.id
                 })
+
+                setMessage('');
             }
         }
         request.open( "POST", `http://localhost:5000/room/message/new`, false );
@@ -100,7 +102,6 @@ export default function ChatRoom({socket,roomSelected}){
                                             <p className="m-0">{message.email}</p>
                                             <div className="content px-2">
                                                 {message.content}
-                                                {/* <p className="m-0">{message.createdAt}</p> */}
                                             </div>
                                         </div>
                                     );

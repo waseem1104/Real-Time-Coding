@@ -83,6 +83,7 @@ router.get("/:id/messages", async (req, res) => {
 });
 
 router.post("/message/new", async (req, res) => {
+  
   const content = req.body.content.trim();
   const roomid = req.body.roomid;
 

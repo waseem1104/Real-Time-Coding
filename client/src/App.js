@@ -16,6 +16,7 @@ import Chatbot from "./component/front/chatbot/Chatbot";
 import Edit from "./component/admin/room/Edit";
 import Request from "./component/front/request/Request";
 import RequestAdmin from "./component/admin/request/Request";
+import Error404 from "./component/404";
 
 function App() {
 
@@ -65,11 +66,6 @@ function App() {
                     }/>
 
                     {/* BACK */}
-                    <Route path="/admin" element={
-                        <IsAdmin>
-                            <Admin/>
-                        </IsAdmin>
-                    }/>
 
                     <Route path="/admin/room/new" element={
                         <IsAdmin>
@@ -93,6 +89,9 @@ function App() {
                             </SocketProvider>
                         </IsAdmin>
                     }/>
+
+
+                    <Route path="*" element={<Error404/>}/>
 
                 </Routes>
             </AuthProvider>

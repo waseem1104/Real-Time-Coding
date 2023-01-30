@@ -31,7 +31,7 @@ export default function Menu(){
                             <Link to={'/rooms'} className={"nav-link"}>Salons</Link>
                             <Link to={'/request'} className={"nav-link"}>Demande</Link>
                             { auth.user.isAdmin ?
-                                <Link to={'/admin'} className={"nav-link"}>Administration</Link>
+                                <Link to={'/admin/room/new'} className={"nav-link"}>Administration</Link>
                                 : ""}
                         </Nav>
 

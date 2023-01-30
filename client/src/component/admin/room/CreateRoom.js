@@ -8,12 +8,13 @@ import Col from 'react-bootstrap/Col';
 import { useSocket } from '../../../context/SocketContext';
 import List from "./List";
 import Cookies from 'universal-cookie';
+import Alert from 'react-bootstrap/Alert';
 export default function CreateRoom(){
 
     const cookies = new Cookies();
     const [name, setName] = useState('');
     const [size,setSize] = useState(1);
-
+    const [alert, setAlert] = useState(false);
     const socket = useSocket();
 
 
@@ -21,23 +22,32 @@ export default function CreateRoom(){
         () => {
             const data = {name: name, size:size};
 
-            fetch('http://localhost:5000/admin/room/new', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + cookies.get("token")
-                },
-                body: JSON.stringify(data),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('Success:', data);
-                    socket.emit('room created',{id:data.id,name:name,size:size,createdAt:data.createdAt})
-                    
+            if (name.trim().length > 2 && size >= 1){
+                fetch('http://localhost:5000/admin/room/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + cookies.get("token")
+                    },
+                    body: JSON.stringify(data),
                 })
-                .catch((error) => {
-                    console.error('Error:', error);
+                    .then((response) => response.json())
+                    .then((data) => {
+                        setAlert(false);
+                        setName('');
+                        setSize(1);
+                        socket.emit('room created',{id:data.id,name:name,size:size,createdAt:data.createdAt})
+                        
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
                 });
+            }else{
+               setAlert(true);
+            }
+
+
+
         },
         [name,size]
     );
@@ -47,6 +57,11 @@ export default function CreateRoom(){
             <MenuAdmin/>
             <Container>
                 <Row>
+                {alert ?
+                    <Alert key="danger" variant="danger" className="mt-3">
+                        La taille du salon doit être supérieur à 1 et la taille du nom doit être supérieur à 2 caractères !
+                    </Alert> : ''
+                }
                     <Col>
                         <div className={"d-flex justify-content-center mt-5"}>
                             <Card style={{width: '25rem'}}>
