@@ -16,6 +16,8 @@ const UserRouter = require("./routes/User");
 const ChatRouter = require("./routes/Chat");
 const checkAuthentication = require("./middlewares/checkAuthentication");
 const checkIsAdmin = require("./middlewares/checkIsAdmin");
+const RequestRouter = require("./routes/Request");
+
 
 const corsOption = {
     origin: ['http://localhost:3000'],
@@ -40,6 +42,7 @@ app.use("/admin",checkIsAdmin,AdminRouter);
 app.use("/room", checkAuthentication,RoomRouter);
 app.use("/user",checkAuthentication,UserRouter);
 app.use("/chat", checkAuthentication, ChatRouter);
+app.use("/request", checkAuthentication, RequestRouter);
 
 app.get("/", (req, res, next) => {
     res.send("Hello world!");

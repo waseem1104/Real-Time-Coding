@@ -5,7 +5,7 @@ exports.RoomMessage = require("./RoomMessage");
 exports.RoomUser = require("./RoomUser");
 exports.Planning = require("./Planning");
 exports.Chat = require("./Chat");
-
+exports.Request = require("./Request");
 
 // ROOM MESSAGE //
 
@@ -24,3 +24,7 @@ exports.Planning.belongsTo(exports.User);
 // CHAT PUBLIC
 exports.Chat.belongsTo(exports.User, {through: exports.Chat, foreignKey: "from" });
 
+// REQUEST
+
+exports.Request.belongsTo(exports.User, {through: exports.Request, foreignKey: "userid" });
+exports.Request.belongsTo(exports.User, {through: exports.Request, foreignKey: "advisor" });
