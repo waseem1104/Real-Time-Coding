@@ -36,4 +36,21 @@ router.get("/checkUser", async (req, res) => {
     }
 });
 
+router.get("/all", async (req, res) => {
+    try {
+        const result = await User.findAll({
+            where: {
+                status: 1,
+                isAdmin: true
+            },
+        });
+
+        res.json(result);
+
+    } catch (error) {
+        res.sendStatus(500);
+        console.error(error);
+    }
+});
+
 module.exports = router;
