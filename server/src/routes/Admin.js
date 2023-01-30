@@ -37,7 +37,12 @@ router.post("/room/new", async (req, res) => {
 
 router.get("/room/all", async (req, res) => {
     try {
-        const result = await Room.findAll();
+        const result = await Room.findAll({
+          where:{
+              status: 1
+          }
+        }
+        );
         res.json(result);
     } catch (error) {
         res.sendStatus(500);
@@ -106,5 +111,29 @@ router.put("/room/edit/:id", async (req, res) => {
     }
 });
 
+router.patch("/room/delete/:id", async (req, res) => {
+    
+  try {   
+      const [nbLines, [result]] = await Room.update({status:-1}, {
+          where: {
+              id: parseInt(req.params.id, 10),
+          },
+          returning: true,
+      });
+      if (!nbLines) {
+          res.sendStatus(404);
+      } else {
+          res.json(result);
+      }
+  } catch (error) {
+      console.log(error);
+      if (error instanceof ValidationError) {
+          res.status(422).json(formatError(error));
+      } else {
+          res.sendStatus(500);
+          console.error(error);
+      }
+  }
+});
 
 module.exports = router;
