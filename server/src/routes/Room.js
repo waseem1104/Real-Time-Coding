@@ -15,7 +15,7 @@ const formatError = (validationError) => {
 router.get("/", async (req, res) => {
     try {
       const result = await connection.query(
-        "SELECT id, name, size FROM rooms ", 
+        "SELECT id, name, size FROM rooms WHERE status = 1", 
       { 
         type: QueryTypes.SELECT, 
         replacements: { 

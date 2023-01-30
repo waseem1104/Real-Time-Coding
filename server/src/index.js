@@ -164,6 +164,10 @@ io.on('connection', function(socket) {
       io.sockets.emit("get room",room);
     }); 
 
+    socket.on('room deleted',(room)=>{
+      socket.broadcast.emit("room deleted",room);
+    });
+
     socket.on('public message', ({content,dateCreated}) =>{
       io.sockets.emit('public message', 
       {

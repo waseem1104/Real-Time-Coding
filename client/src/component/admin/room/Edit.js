@@ -34,7 +34,7 @@ export default function Edit(){
             }
         }
         request.open( "GET", `http://localhost:5000/admin/room/${params.id}`, false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
     }, []);
 
@@ -49,7 +49,7 @@ export default function Edit(){
             }
         }
         request.open( "GET", `http://localhost:5000/admin/room/${params.id}/count`, false );
-        // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+        request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
         if (size >= count){
@@ -61,7 +61,7 @@ export default function Edit(){
             }
             request.open( "PUT", `http://localhost:5000/admin/room/edit/${params.id}`, false );
             request.setRequestHeader("Content-type", "application/json");
-            // request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
+            request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
             request.send(JSON.stringify({
                 "name": name,
                 "size": size

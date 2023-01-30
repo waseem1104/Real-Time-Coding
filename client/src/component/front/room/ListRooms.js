@@ -63,6 +63,15 @@ export default function ListRooms(){
         })
     },[rooms,socket])
 
+    useEffect( () => {
+        socket.on("room deleted", (room) =>{
+            let getRooms = rooms.slice();
+            let found = getRooms.findIndex( element => element.id == room.id);
+            getRooms.splice(found,1);
+            setRooms(getRooms);
+        })
+    },[rooms])
+
     useEffect ( () => {
 
             socket.on('update count user room join', (room) => {
