@@ -1,4 +1,4 @@
-import { Fragment,useState, useEffect, useMemo, useCallback} from "react";
+import {Fragment, useState, useEffect, useMemo, useCallback} from "react";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
@@ -8,86 +8,86 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Menu from "../Menu";
 import ChatRoom from "./ChatRoom";
 import Cookies from 'universal-cookie';
-import { useSocket } from '../../../context/SocketContext';
+import {useSocket} from '../../../context/SocketContext';
 import Notification from "../Notification";
 
-export default function ListRooms(){
+export default function ListRooms() {
 
-    const [rooms,setRooms] = useState([]);
-    const [countRooms,setCountRooms] = useState([]);
+    const [rooms, setRooms] = useState([]);
+    const [countRooms, setCountRooms] = useState([]);
     const [roomSelected, setRoomSelected] = useState([]);
     const socket = useSocket();
     const cookies = new Cookies();
 
-    useEffect( () => {
+    useEffect(() => {
 
         const request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
+        request.onreadystatechange = function () {
             if (request.readyState == XMLHttpRequest.DONE) {
                 setRooms(JSON.parse(request.responseText));
             }
         }
-        request.open( "GET", 'http://localhost:5000/room/', false );
+        request.open("GET", 'http://localhost:5000/room/', false);
         request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
-        request.onreadystatechange = function() {
+        request.onreadystatechange = function () {
             if (request.readyState == XMLHttpRequest.DONE) {
                 setCountRooms(JSON.parse(request.responseText));
             }
         }
-        request.open( "GET", 'http://localhost:5000/room/count', false );
+        request.open("GET", 'http://localhost:5000/room/count', false);
         request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
-    },[]);
+    }, []);
 
-    useEffect( () => {
+    useEffect(() => {
 
-        if (rooms.length > 0){
-            socket.on("get room updated", (room) =>{
+        if (rooms.length > 0) {
+            socket.on("get room updated", (room) => {
 
                 let getRooms = rooms.slice();
-                let found = getRooms.findIndex( element => element.id == room.id);
+                let found = getRooms.findIndex(element => element.id == room.id);
                 getRooms[found].name = room.name;
                 getRooms[found].size = room.size;
                 setRooms(getRooms);
             })
         }
-    },[rooms,socket])
+    }, [rooms, socket])
 
-    useEffect( () => {
+    useEffect(() => {
 
-        socket.on("get room", (room) =>{
+        socket.on("get room", (room) => {
             let new_room = rooms.slice();
             new_room.unshift(room);
             setRooms(new_room);
         })
-    },[rooms,socket])
+    }, [rooms, socket])
 
-    useEffect( () => {
-        socket.on("room deleted", (room) =>{
+    useEffect(() => {
+        socket.on("room deleted", (room) => {
             let getRooms = rooms.slice();
-            let found = getRooms.findIndex( element => element.id == room.id);
-            getRooms.splice(found,1);
+            let found = getRooms.findIndex(element => element.id == room.id);
+            getRooms.splice(found, 1);
             setRooms(getRooms);
         })
-    },[rooms])
+    }, [rooms])
 
-    useEffect ( () => {
+    useEffect(() => {
 
-            socket.on('update count user room join', (room) => {
-                let users_room = document.querySelector(`#users_room${room}`);
-                let count = parseInt(users_room.innerText) + 1;
-                users_room.innerText = count;
-            })
+        socket.on('update count user room join', (room) => {
+            let users_room = document.querySelector(`#users_room${room}`);
+            let count = parseInt(users_room.innerText) + 1;
+            users_room.innerText = count;
+        })
 
-            return () => {
-                socket.off("update count user room join");
-            }
+        return () => {
+            socket.off("update count user room join");
+        }
 
-    },[])
+    }, [])
 
-    useEffect ( () => {
+    useEffect(() => {
 
         socket.on('update count user room leave', (room) => {
 
@@ -100,32 +100,32 @@ export default function ListRooms(){
             socket.off("update count user room leave");
         }
 
-    },[])
+    }, [])
 
 
-    const handleSelected = useCallback( (room) =>{
+    const handleSelected = useCallback((room) => {
 
         const request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
+        request.onreadystatechange = function () {
             if (request.readyState == XMLHttpRequest.DONE) {
-                if (JSON.parse(request.responseText)[0].user_nb < room.size){
+                if (JSON.parse(request.responseText)[0].user_nb < room.size) {
                     setRoomSelected(room)
                 }
             }
         }
-        request.open( "GET", `http://localhost:5000/room/${room.id}/count`, false );
+        request.open("GET", `http://localhost:5000/room/${room.id}/count`, false);
         request.setRequestHeader('Authorization', "Bearer " + cookies.get('token'));
         request.send();
 
     });
 
-    const countUser = useCallback ( (id) => {
-        let found = countRooms.findIndex( element => element.roomid == id);
-        if (found != -1){
+    const countUser = useCallback((id) => {
+        let found = countRooms.findIndex(element => element.roomid == id);
+        if (found != -1) {
             return countRooms[found].user_nb;
         }
         return 0;
-    },[countRooms])
+    }, [countRooms])
 
     return (
         <Fragment>
@@ -136,16 +136,19 @@ export default function ListRooms(){
                     <Col md="3">
                         <ListGroup>
 
-                            { 
-                                rooms.map((room,index) => {
+                            {
+                                rooms.map((room, index) => {
                                     return (
-                                        <ListGroup.Item className="room d-flex" key={room.id} id={room.id} onClick={ () => handleSelected(room)}>
+                                        <ListGroup.Item className="room d-flex" key={room.id} id={room.id}
+                                                        onClick={() => handleSelected(room)}>
                                             <img src={`https://picsum.photos/50`} className="rounded mx-2"></img>
                                             <div>
-                                                <div>{ room.name }</div>
-                                                <p className="m-0"><span id={`users_room${room.id}`}>{ countUser(room.id) } </span> / {room.size} utilisateurs</p>
+                                                <div>{room.name}</div>
+                                                <p className="m-0"><span
+                                                    id={`users_room${room.id}`}>{countUser(room.id)} </span> / {room.size} utilisateurs
+                                                </p>
                                             </div>
-                                        
+
                                         </ListGroup.Item>
                                     );
                                 })
@@ -153,12 +156,12 @@ export default function ListRooms(){
                         </ListGroup>
                     </Col>
                     <Col md="7">
-                        { roomSelected.name  && 
-                            <ChatRoom socket={socket} roomSelected={roomSelected}  />
+                        {roomSelected.name &&
+                            <ChatRoom socket={socket} roomSelected={roomSelected}/>
                         }
                     </Col>
                 </Row>
-                <Notification />
+                <Notification/>
             </Container>
         </Fragment>
     )

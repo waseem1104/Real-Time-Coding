@@ -9,6 +9,7 @@ import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useSocket } from '../../../context/SocketContext';
+import Notification from "../Notification";
 export default function Chatbot(){
 
     const socket = useSocket();
@@ -121,6 +122,7 @@ export default function Chatbot(){
                         </Card>
                     </Col>
                 </Row>
+                <Notification/>
             </Container>
         </Fragment>
     );
