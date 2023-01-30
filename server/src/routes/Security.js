@@ -52,4 +52,29 @@ router.post("/login", async (req, res) => {
     }
 });
 
+router.post("/register", async (req, res) => {
+  const email = req.body.email.trim();
+
+  try {
+
+    const result = await User.create({
+      email: email,
+      password: req.body.password,
+      isAdmin: req.body.isAdmin,
+      status: 1,
+    });
+
+ 
+    res.status(201).json(result);
+  } catch (error) {
+
+    if (error instanceof ValidationError) {
+      res.status(422).json(formatError(error));
+    } else {
+      res.sendStatus(500);
+      console.error(error);
+    }
+  }
+});
+
 module.exports = router;
