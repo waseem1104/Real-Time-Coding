@@ -9,6 +9,7 @@ import Button from 'react-bootstrap/Button';
 import {useSocket} from '../../../context/SocketContext';
 import Cookies from 'universal-cookie';
 import PrivateChat from "./PrivateChat";
+import Notification from "../Notification";
 
 export default function Request() {
 
@@ -186,6 +187,7 @@ export default function Request() {
                         </Col>
                         : ""}
                 </Row>
+                <Notification/>
             </Container>
         </Fragment>
     );

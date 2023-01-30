@@ -46,11 +46,79 @@ app.use("/chat", checkAuthentication, ChatRouter);
 app.use("/request", checkAuthentication, RequestRouter);
 app.use("/message", checkAuthentication, MessageRouter);
 
-app.get("/", (req, res, next) => {
-    res.send("Hello world!");
-});
+app.get('/', (req, res) => {
+    console.log('Client connected')
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Access-Control-Allow-Origin', '*')
 
-const chatbotTyping = (to, content, is, step) => {
+    const intervalId = setInterval(() => {
+        const date = new Date().toLocaleString()
+        res.write(`data: ${date}\n\n`)
+    }, 10000);
+
+    res.on('close', () => {
+        console.log('Client closed connection')
+        clearInterval(intervalId)
+        res.end()
+    })
+})
+
+// NOTIFICATION - SSE
+//---------------------------------
+app.get('/status', (request, response) => response.json({clients: clients.length}));
+
+let clients = [];
+let facts = [];
+
+function eventsHandler(request, response, next) {
+    const headers = {
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache'
+    };
+    response.writeHead(200, headers);
+
+    const data = `data: ${JSON.stringify(facts)}\n\n`;
+
+    response.write(data);
+
+    const clientId = Date.now();
+
+    const newClient = {
+        id: clientId,
+        response
+    };
+
+    clients.push(newClient);
+
+    request.on('close', () => {
+        console.log(`${clientId} Connection closed`);
+        facts = [];
+        clients = clients.filter(client => client.id !== clientId);
+    });
+}
+
+app.get('/events', eventsHandler);
+
+function sendEventsToAll(newFact) {
+    clients.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
+}
+
+async function addFact(request, res, next) {
+    const newFact = request.body;
+    facts.push(newFact);
+    setInterval(() => {
+        facts.pop();
+    }, 10000);
+    res.json(newFact)
+    return sendEventsToAll(newFact);
+}
+
+app.post('/fact', addFact);
+
+const chatbotTyping = (
+    to, content, is, step
+) => {
     io.sockets.to(to).emit("chatbot", {
         content: content,
         is: is,

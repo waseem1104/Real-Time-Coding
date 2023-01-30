@@ -1,13 +1,11 @@
 import {Fragment, useState, useEffect, useCallback} from "react";
-import Container from "react-bootstrap/Container";
-import ListGroup from 'react-bootstrap/ListGroup';
-import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import {useSocket} from '../../../context/SocketContext';
 import Cookies from 'universal-cookie';
 import Button from 'react-bootstrap/Button';
+import Notification from "../Notification";
 
 export default function PrivateChat({requestUser}) {
     const socket = useSocket();
@@ -108,6 +106,7 @@ export default function PrivateChat({requestUser}) {
                     </InputGroup>
                 </Card.Footer>
             </Card>
+            <Notification/>
         </Fragment>
     );
 }

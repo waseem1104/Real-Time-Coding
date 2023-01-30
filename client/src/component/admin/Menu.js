@@ -26,6 +26,7 @@ export default function Menu() {
                         <Nav className="me-auto">
                             <Link to={'/admin/room/new'} className={"nav-link"}>Salons</Link>
                             <Link to={'/admin/request'} className={"nav-link"}>Demandes</Link>
+                            <Link to={'/admin/send-notification'} className={"nav-link"}>Notification</Link>
                         </Nav>
                         <Nav className="">
                             <Button variant="danger" onClick={logout}>Déconnexion</Button>

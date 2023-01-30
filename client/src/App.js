@@ -17,6 +17,7 @@ import Edit from "./component/admin/room/Edit";
 import Request from "./component/front/request/Request";
 import RequestAdmin from "./component/admin/request/Request";
 import Error404 from "./component/404";
+import CustomizeNotification from "./component/admin/sse/CustomizeNotification";
 
 function App() {
 
@@ -90,6 +91,13 @@ function App() {
                         </IsAdmin>
                     }/>
 
+                    <Route path="/admin/send-notification" element={
+                        <IsAdmin>
+                            <SocketProvider>
+                                <CustomizeNotification />
+                            </SocketProvider>
+                        </IsAdmin>
+                    }/>
 
                     <Route path="*" element={<Error404/>}/>
 
